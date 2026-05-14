@@ -306,41 +306,33 @@ function PatientFlow({ onNavigate }) {
   };
 
   const processarImagem = async (file) => {
-    setOcrState("uploading");
+    // Mostra preview imediatamente
     const reader = new FileReader();
-    reader.onload = async (e) => {
-      const b64 = e.target.result.split(",")[1];
-      setUploadedImage(e.target.result);
-      setOcrState("processing");
-      try {
-        const res = await fetch("https://api.anthropic.com/v1/messages", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            model: "claude-sonnet-4-20250514",
-            max_tokens: 1000,
-            messages: [{
-              role: "user",
-              content: [
-                { type: "image", source: { type: "base64", media_type: file.type, data: b64 } },
-                { type: "text", text: `Você é um assistente médico. Analise esta imagem de pedido médico. Extraia APENAS os exames laboratoriais solicitados. Responda SOMENTE com JSON: {"exames": ["nome 1", "nome 2"]}. Normalize para o padrão brasileiro. Se não for pedido médico: {"exames": [], "erro": "Não reconhecido como pedido médico"}.` }
-              ]
-            }]
-          })
-        });
-        const data = await res.json();
-        const text = data.content?.map(c => c.text || "").join("") || "";
-        const parsed = JSON.parse(text.replace(/```json|```/g, "").trim());
-        if (parsed.erro) { setOcrState("error"); setOcrResult(parsed.erro); return; }
-        setSelectedExames(parsed.exames || []);
-        setOcrState("done");
-        setOcrResult(`${(parsed.exames || []).length} exame(s) identificado(s)`);
-      } catch {
-        setOcrState("error");
-        setOcrResult("Não foi possível processar. Adicione os exames manualmente.");
-      }
-    };
+    reader.onload = (e) => setUploadedImage(e.target.result);
     reader.readAsDataURL(file);
+
+    setOcrState("processing");
+    try {
+      // Envia para o backend real no Render
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("https://checkapp-cz9a.onrender.com/ocr", {
+        method: "POST",
+        body: formData,
+      });
+      const resultado = await res.json();
+      if (resultado.erro) {
+        setOcrState("error");
+        setOcrResult(resultado.erro);
+        return;
+      }
+      setSelectedExames(resultado.exames || []);
+      setOcrState("done");
+      setOcrResult(`${(resultado.exames || []).length} exame(s) identificado(s)`);
+    } catch {
+      setOcrState("error");
+      setOcrResult("Não foi possível processar. Adicione os exames manualmente.");
+    }
   };
 
   const handleFileChange = (e) => {
