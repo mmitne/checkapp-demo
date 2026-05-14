@@ -1,680 +1,637 @@
 import { useState, useEffect } from "react";
 
-// ─── MOCK DATA ────────────────────────────────────────────────────────────────
-const LABS_DB = [
-  { id: 1, nome: "BioLab São Paulo", bairro: "Pinheiros", cidade: "São Paulo", cep: "05422-030", rating: 4.8, reviews: 312, distancia: 0.8, capacidade: 72, ocupacao: 31, especialidades: ["Hemograma", "Glicemia", "TSH", "PSA", "Urina", "Colesterol"], logoColor: "#0057FF" },
-  { id: 2, nome: "Analítica Clínica", bairro: "Consolação", cidade: "São Paulo", cep: "01301-100", rating: 4.6, reviews: 187, distancia: 1.4, capacidade: 55, ocupacao: 22, especialidades: ["Hemograma", "PCR", "Vitamina D", "Ferro", "TSH"], logoColor: "#00C896" },
-  { id: 3, nome: "Laboratório Central RJ", bairro: "Botafogo", cidade: "Rio de Janeiro", cep: "22250-040", rating: 4.9, reviews: 541, distancia: 2.1, capacidade: 90, ocupacao: 58, especialidades: ["Hemograma", "Glicemia", "Colesterol", "Cortisol", "Beta HCG"], logoColor: "#FF6B35" },
-  { id: 4, nome: "DiagnósticosFast", bairro: "Moema", cidade: "São Paulo", cep: "04077-020", rating: 4.5, reviews: 98, distancia: 3.2, capacidade: 40, ocupacao: 14, especialidades: ["Urina", "Fezes", "PCR", "Glicemia"], logoColor: "#9B59B6" },
-  { id: 5, nome: "Citolab Premium", bairro: "Itaim Bibi", cidade: "São Paulo", cep: "04543-906", rating: 4.7, reviews: 224, distancia: 1.9, capacidade: 65, ocupacao: 28, especialidades: ["TSH", "Tireoide", "Hemograma", "PSA", "CEA", "AFP"], logoColor: "#E74C3C" },
-  { id: 6, nome: "Analises Clinicas Carlos Chagas", bairro: "Bosque", cidade: "Rio Branco", cep: "69908-650", rating: 4.4, reviews: 76, distancia: 4.5, capacidade: 35, ocupacao: 11, especialidades: ["Hemograma", "Glicemia", "Urina"], logoColor: "#1ABC9C" },
-  { id: 7, nome: "UNILAB Diagnósticos", bairro: "Gruta de Lourdes", cidade: "Maceió", cep: "57052-825", rating: 4.3, reviews: 145, distancia: 5.1, capacidade: 50, ocupacao: 19, especialidades: ["Hemograma", "Colesterol", "PCR", "TSH"], logoColor: "#3498DB" },
-  { id: 8, nome: "HEMOPAC Centro Diagnóstico", bairro: "Farol", cidade: "Maceió", cep: "57051-380", rating: 4.6, reviews: 203, distancia: 2.8, capacidade: 60, ocupacao: 35, especialidades: ["Hemograma", "Coagulação", "Plaquetas", "Ferritina"], logoColor: "#E67E22" },
-];
-
-const EXAMES_POPULARES = [
-  { nome: "Hemograma Completo", precoRef: 45, icon: "🩸" },
-  { nome: "Glicemia em Jejum", precoRef: 25, icon: "💉" },
-  { nome: "TSH (Tireoide)", precoRef: 65, icon: "🦋" },
-  { nome: "Colesterol Total + Frações", precoRef: 55, icon: "💊" },
-  { nome: "Vitamina D 25-OH", precoRef: 80, icon: "☀️" },
-  { nome: "PSA Total", precoRef: 70, icon: "🔬" },
-  { nome: "Urina Tipo I (EAS)", precoRef: 30, icon: "🧪" },
-  { nome: "PCR (Proteína C-Reativa)", precoRef: 40, icon: "🧬" },
-  { nome: "Beta HCG Quantitativo", precoRef: 75, icon: "🤰" },
-  { nome: "Ferritina Sérica", precoRef: 60, icon: "⚗️" },
-];
-
-const LEILOES_ATIVOS = [
-  { id: "LAE-001", paciente: "Maria S.", exames: ["Hemograma Completo", "Glicemia em Jejum"], lances: 4, tempoRestante: 847, melhorLance: 52, precoRef: 70, status: "ativo", cidade: "São Paulo", bairro: "Pinheiros" },
-  { id: "LAE-002", paciente: "João M.", exames: ["TSH (Tireoide)", "Vitamina D 25-OH"], lances: 2, tempoRestante: 1240, melhorLance: 118, precoRef: 145, status: "ativo", cidade: "São Paulo", bairro: "Vila Madalena" },
-  { id: "LAE-003", paciente: "Ana R.", exames: ["Colesterol Total + Frações", "PCR"], lances: 6, tempoRestante: 320, melhorLance: 68, precoRef: 95, status: "quente", cidade: "Rio de Janeiro", bairro: "Botafogo" },
-  { id: "LAE-004", paciente: "Carlos F.", exames: ["PSA Total"], lances: 1, tempoRestante: 2100, melhorLance: 62, precoRef: 70, status: "ativo", cidade: "São Paulo", bairro: "Moema" },
-  { id: "LAE-005", paciente: "Lucia P.", exames: ["Beta HCG Quantitativo", "Hemograma Completo", "Ferritina Sérica"], lances: 3, tempoRestante: 560, melhorLance: 142, precoRef: 180, status: "ativo", cidade: "São Paulo", bairro: "Ipiranga" },
-];
-
-const METRICAS = {
-  totalLabs: 2000, totalLeiloes: 1847, economiaGerada: 482300, ticketMedio: 87, taxaConversao: 73, nps: 68,
-  receitaMensal: [42000, 58000, 71000, 89000, 112000, 134000, 158000, 187000, 203000, 241000, 276000, 312000],
-  leiloesPorDia: [45, 62, 58, 71, 83, 91, 87, 102, 118, 134, 128, 145, 139, 162],
-  ocupacaoLabsAntes: 41, ocupacaoLabsDepois: 68,
+// ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
+const C = {
+  bg: "#F8FAFB",
+  surface: "#FFFFFF",
+  border: "#E4EAF0",
+  borderLight: "#F0F4F8",
+  text: "#0D1B2A",
+  textMid: "#4A5568",
+  textLight: "#8A9BB0",
+  blue: "#005EB8",
+  blueLight: "#E8F0FB",
+  blueMid: "#1976D2",
+  teal: "#00897B",
+  tealLight: "#E0F2F1",
+  red: "#D32F2F",
+  redLight: "#FFEBEE",
+  green: "#2E7D32",
+  greenLight: "#E8F5E9",
+  amber: "#F57F17",
+  amberLight: "#FFFDE7",
+  shadow: "0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)",
+  shadowMd: "0 2px 8px rgba(0,0,0,0.08), 0 8px 32px rgba(0,0,0,0.06)",
 };
 
-// ─── HELPERS ─────────────────────────────────────────────────────────────────
-function formatTime(seconds) {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
-}
-function pct(occ, cap) { return Math.round((occ / cap) * 100); }
-function desconto(melhor, ref) { return Math.round(((ref - melhor) / ref) * 100); }
+const LABS_MOCK = [
+  { id: 1, nome: "Fleury Medicina e Saúde", bairro: "Paraíso", cidade: "São Paulo", rating: 4.9, reviews: 1240, distancia: 0.8, capacidade: 80, ocupacao: 35, acreditacao: "ISO 15189", logoColor: "#005EB8" },
+  { id: 2, nome: "DASA Diagnósticos da América", bairro: "Vila Mariana", cidade: "São Paulo", rating: 4.7, reviews: 876, distancia: 1.4, capacidade: 65, ocupacao: 28, acreditacao: "CAP", logoColor: "#00897B" },
+  { id: 3, nome: "Grupo Hermes Pardini", bairro: "Saúde", cidade: "São Paulo", rating: 4.6, reviews: 543, distancia: 2.1, capacidade: 55, ocupacao: 18, acreditacao: "ISO 15189", logoColor: "#1976D2" },
+  { id: 4, nome: "CDB Centro de Diagnósticos Brasil", bairro: "Moema", cidade: "São Paulo", rating: 4.5, reviews: 312, distancia: 2.8, capacidade: 40, ocupacao: 12, acreditacao: "PALC", logoColor: "#6A1B9A" },
+  { id: 5, nome: "Sabin Medicina Diagnóstica", bairro: "Brooklin", cidade: "São Paulo", rating: 4.8, reviews: 698, distancia: 3.5, capacidade: 70, ocupacao: 31, acreditacao: "ISO 15189", logoColor: "#BF360C" },
+];
 
-// ─── COMPONENTS ──────────────────────────────────────────────────────────────
+const EXAMES_DB = [
+  "Hemograma Completo","Glicemia em Jejum","TSH Ultrassensível","T4 Livre",
+  "Colesterol Total e Frações","Triglicerídeos","HDL Colesterol","LDL Colesterol",
+  "Vitamina D 25-OH","Vitamina B12","Ferritina Sérica","Ferro Sérico",
+  "PCR Proteína C-Reativa","VHS","TGO AST","TGP ALT",
+  "Gama GT","Fosfatase Alcalina","Bilirrubinas Totais e Frações",
+  "Ureia","Creatinina","Ácido Úrico","Sódio","Potássio",
+  "PSA Total","PSA Livre","CEA","CA 19-9","AFP",
+  "Beta HCG Quantitativo","Progesterona","Estradiol","FSH","LH",
+  "Testosterona Total","Prolactina","Cortisol","Insulina em Jejum",
+  "Urina Tipo I EAS","Urocultura","Parasitológico de Fezes","Coprocultura",
+  "INR Tempo de Protrombina","TTPA","Plaquetas","Reticulócitos",
+];
 
-function Logo({ size = 28 }) {
+const LEILOES_MOCK = [
+  { id: "LAE-2847", exames: ["Hemograma Completo","Glicemia em Jejum","Colesterol Total e Frações"], lances: 5, timer: 743, melhorLance: 89, precoRef: 125, cidade: "São Paulo", bairro: "Pinheiros" },
+  { id: "LAE-2848", exames: ["TSH Ultrassensível","T4 Livre","Vitamina D 25-OH"], lances: 3, timer: 1240, melhorLance: 118, precoRef: 165, cidade: "São Paulo", bairro: "Vila Mariana" },
+  { id: "LAE-2849", exames: ["PSA Total","PSA Livre"], lances: 2, timer: 380, melhorLance: 98, precoRef: 130, cidade: "Rio de Janeiro", bairro: "Botafogo" },
+  { id: "LAE-2850", exames: ["Beta HCG Quantitativo","Hemograma Completo","Ferritina Sérica"], lances: 4, timer: 560, melhorLance: 142, precoRef: 190, cidade: "São Paulo", bairro: "Ipiranga" },
+];
+
+function fmt(s) { const m = Math.floor(s / 60); return `${m}:${(s % 60).toString().padStart(2, "0")}`; }
+function disc(a, b) { return Math.round(((b - a) / b) * 100); }
+function pct(a, b) { return Math.round((a / b) * 100); }
+
+function Card({ children, style = {}, onClick }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <div style={{
-        width: size, height: size, borderRadius: "30%", background: "linear-gradient(135deg, #00D4FF, #0057FF)",
-        display: "flex", alignItems: "center", justifyContent: "center", fontSize: size * 0.5, fontWeight: 900, color: "#fff",
-        boxShadow: "0 2px 12px rgba(0,87,255,0.4)"
-      }}>✓</div>
-      <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: size * 0.75, letterSpacing: "-0.03em", color: "#0A0E1A" }}>
-        Check<span style={{ color: "#0057FF" }}>App</span>
-      </span>
-    </div>
-  );
-}
-
-function Badge({ children, color = "#0057FF", bg }) {
-  return (
-    <span style={{
-      background: bg || `${color}18`, color, fontSize: 11, fontWeight: 700, padding: "3px 8px",
-      borderRadius: 20, letterSpacing: "0.03em", textTransform: "uppercase"
-    }}>{children}</span>
-  );
-}
-
-function Card({ children, style = {} }) {
-  return (
-    <div style={{
-      background: "#fff", borderRadius: 16, border: "1px solid #F0F2F8",
-      boxShadow: "0 2px 20px rgba(0,0,0,0.05)", padding: 24, ...style
+    <div onClick={onClick} style={{
+      background: C.surface, borderRadius: 12, border: `1px solid ${C.border}`,
+      boxShadow: C.shadow, ...style, cursor: onClick ? "pointer" : "default"
     }}>{children}</div>
   );
 }
 
-function MiniChart({ data, color = "#0057FF", height = 50 }) {
-  if (!data || data.length === 0) return null;
-  const max = Math.max(...data);
-  const min = Math.min(...data);
-  const range = max - min || 1;
-  const w = 200, h = height;
-  const pts = data.map((v, i) => {
-    const x = (i / (data.length - 1)) * w;
-    const y = h - ((v - min) / range) * (h - 8) - 4;
-    return `${x},${y}`;
-  }).join(" ");
-  const area = `0,${h} ${pts} ${w},${h}`;
+function Btn({ children, variant = "primary", onClick, disabled, style = {}, size = "md" }) {
+  const pad = size === "sm" ? "7px 14px" : size === "lg" ? "14px 28px" : "10px 20px";
+  const fs = size === "sm" ? 13 : size === "lg" ? 15 : 14;
+  const base = {
+    border: "none", borderRadius: 8, cursor: disabled ? "not-allowed" : "pointer",
+    fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: fs,
+    padding: pad, transition: "all 0.15s", opacity: disabled ? 0.5 : 1, ...style
+  };
+  const variants = {
+    primary: { background: C.blue, color: "#fff", boxShadow: `0 2px 8px ${C.blue}40` },
+    secondary: { background: C.blueLight, color: C.blue },
+    ghost: { background: "transparent", color: C.textMid, border: `1px solid ${C.border}` },
+    success: { background: C.greenLight, color: C.green },
+  };
+  return <button onClick={onClick} disabled={disabled} style={{ ...base, ...variants[variant] }}>{children}</button>;
+}
+
+function Tag({ children, color = C.blue, bg }) {
   return (
-    <svg width={w} height={h} style={{ overflow: "visible" }}>
-      <defs>
-        <linearGradient id={`grad-${color.replace("#","")}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.25" />
-          <stop offset="100%" stopColor={color} stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <polygon points={area} fill={`url(#grad-${color.replace("#","")})`} />
-      <polyline points={pts} fill="none" stroke={color} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
-    </svg>
+    <span style={{
+      background: bg || `${color}18`, color, fontSize: 11, fontWeight: 600,
+      padding: "3px 8px", borderRadius: 20, whiteSpace: "nowrap", display: "inline-block"
+    }}>{children}</span>
   );
 }
 
-function Countdown({ seconds, setSeconds }) {
-  useEffect(() => {
-    const t = setInterval(() => setSeconds(s => Math.max(0, s - 1)), 1000);
-    return () => clearInterval(t);
-  }, [setSeconds]);
-  const urgent = seconds < 300;
+function Divider() { return <div style={{ height: 1, background: C.borderLight, margin: "16px 0" }} />; }
+
+function LabInitial({ nome, color, size = 44 }) {
   return (
-    <span style={{ color: urgent ? "#FF3B30" : "#0057FF", fontWeight: 800, fontFamily: "monospace", fontSize: 14 }}>
-      {urgent && "⚡ "}{formatTime(seconds)}
+    <div style={{
+      width: size, height: size, borderRadius: 10, flexShrink: 0,
+      background: `${color}18`, border: `1px solid ${color}30`,
+      display: "flex", alignItems: "center", justifyContent: "center",
+      fontSize: size * 0.4, fontWeight: 800, color, fontFamily: "'Syne', sans-serif"
+    }}>{nome[0]}</div>
+  );
+}
+
+function Stars({ rating }) {
+  return (
+    <span style={{ fontSize: 11, color: C.amber }}>
+      {"★".repeat(Math.floor(rating))}{"☆".repeat(5 - Math.floor(rating))}
+      <span style={{ color: C.textLight, marginLeft: 4 }}>{rating}</span>
     </span>
   );
 }
 
-// ─── PAGES ────────────────────────────────────────────────────────────────────
+function Header({ page, onNavigate }) {
+  return (
+    <header style={{
+      background: C.surface, borderBottom: `1px solid ${C.border}`,
+      padding: "0 40px", height: 64, display: "flex", alignItems: "center",
+      justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100,
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
+        <div onClick={() => onNavigate("home")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ width: 32, height: 32, borderRadius: 8, background: C.blue, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, color: "#fff", fontWeight: 900 }}>✓</div>
+          <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 18, color: C.text, letterSpacing: "-0.02em" }}>Check<span style={{ color: C.blue }}>App</span></span>
+        </div>
+        <nav style={{ display: "flex", gap: 4 }}>
+          {[
+            { id: "home", label: "Início" },
+            { id: "patient", label: "Para Pacientes" },
+            { id: "lab", label: "Para Laboratórios" },
+            { id: "investor", label: "Investidores" },
+          ].map(item => (
+            <button key={item.id} onClick={() => onNavigate(item.id)} style={{
+              background: page === item.id ? C.blueLight : "transparent",
+              color: page === item.id ? C.blue : C.textMid,
+              border: "none", padding: "6px 12px", borderRadius: 6, cursor: "pointer",
+              fontSize: 13, fontWeight: page === item.id ? 700 : 500,
+              fontFamily: "'DM Sans', sans-serif", transition: "all 0.15s"
+            }}>{item.label}</button>
+          ))}
+        </nav>
+      </div>
+      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <Tag color={C.green} bg={C.greenLight}>● Ao vivo</Tag>
+        <Btn variant="primary" size="sm" onClick={() => onNavigate("patient")}>Fazer Exame</Btn>
+      </div>
+    </header>
+  );
+}
 
-function LandingPage({ onNavigate }) {
-  const [activeAuction, setActiveAuction] = useState(0);
-  const [timers, setTimers] = useState(LEILOES_ATIVOS.map(l => l.tempoRestante));
-
+function HomePage({ onNavigate }) {
+  const [timers, setTimers] = useState(LEILOES_MOCK.map(l => l.timer));
   useEffect(() => {
-    const t = setInterval(() => {
-      setTimers(prev => prev.map(s => Math.max(0, s - 1)));
-    }, 1000);
+    const t = setInterval(() => setTimers(p => p.map(s => Math.max(0, s - 1))), 1000);
     return () => clearInterval(t);
   }, []);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#F7F9FF", fontFamily: "'DM Sans', sans-serif" }}>
-      {/* Hero */}
-      <div style={{
-        background: "linear-gradient(135deg, #0A0E1A 0%, #0D1A3E 50%, #0A2060 100%)",
-        padding: "80px 40px 100px", position: "relative", overflow: "hidden"
-      }}>
-        {/* Decorative orbs */}
-        {[
-          { w: 400, h: 400, top: -150, right: -100, color: "rgba(0,87,255,0.15)" },
-          { w: 250, h: 250, bottom: -80, left: 80, color: "rgba(0,212,255,0.1)" },
-        ].map((o, i) => (
-          <div key={i} style={{
-            position: "absolute", width: o.w, height: o.h, borderRadius: "50%",
-            background: `radial-gradient(circle, ${o.color}, transparent)`,
-            top: o.top, right: o.right, bottom: o.bottom, left: o.left, pointerEvents: "none"
-          }} />
-        ))}
-
+    <div style={{ background: C.bg, minHeight: "100vh" }}>
+      <div style={{ background: "linear-gradient(160deg, #001F4D 0%, #003A8C 60%, #005EB8 100%)", padding: "80px 40px 100px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, opacity: 0.06, backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "32px 32px" }} />
         <div style={{ maxWidth: 1100, margin: "0 auto", position: "relative", zIndex: 1 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 60 }}>
-            <Logo size={36} />
-            <div style={{ display: "flex", gap: 12 }}>
-              {["Para Pacientes", "Para Laboratórios", "Investidores"].map(label => (
-                <button key={label} onClick={() => onNavigate(label === "Para Pacientes" ? "patient" : label === "Para Laboratórios" ? "lab" : "investor")}
-                  style={{
-                    background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)",
-                    color: "#fff", padding: "8px 16px", borderRadius: 8, cursor: "pointer", fontSize: 13,
-                    fontFamily: "'DM Sans', sans-serif", fontWeight: 500,
-                    backdropFilter: "blur(10px)", transition: "all 0.2s"
-                  }}>
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 420px", gap: 64, alignItems: "center" }}>
             <div>
               <div style={{ marginBottom: 20 }}>
-                <Badge color="#00D4FF" bg="rgba(0,212,255,0.15)">🚀 Leilão Reverso em Tempo Real</Badge>
+                <Tag color="#00BCD4" bg="rgba(0,188,212,0.15)">Leilão Reverso · Medicina Diagnóstica</Tag>
               </div>
-              <h1 style={{
-                color: "#fff", fontSize: 52, fontFamily: "'Syne', sans-serif", fontWeight: 800,
-                lineHeight: 1.1, letterSpacing: "-0.03em", margin: "0 0 20px"
-              }}>
-                Exames até <span style={{ color: "#00D4FF" }}>60% mais baratos</span> pelo leilão
+              <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 48, fontWeight: 800, color: "#fff", lineHeight: 1.1, letterSpacing: "-0.03em", margin: "0 0 20px" }}>
+                Exames laboratoriais com <span style={{ color: "#64B5F6" }}>até 60% de economia</span>
               </h1>
-              <p style={{ color: "rgba(255,255,255,0.65)", fontSize: 17, lineHeight: 1.6, marginBottom: 32 }}>
-                Laboratórios competem pelos seus exames em tempo real. Você escolhe o melhor preço, horário e localização. Simples assim.
+              <p style={{ color: "rgba(255,255,255,0.65)", fontSize: 17, lineHeight: 1.7, margin: "0 0 36px", maxWidth: 480 }}>
+                Laboratórios parceiros competem pelo seu pedido médico em tempo real. Você escolhe o melhor preço, horário e localização.
               </p>
-              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                <button onClick={() => onNavigate("patient")} style={{
-                  background: "linear-gradient(135deg, #0057FF, #00D4FF)", border: "none",
-                  color: "#fff", padding: "14px 28px", borderRadius: 12, cursor: "pointer",
-                  fontSize: 15, fontWeight: 700, fontFamily: "'DM Sans', sans-serif",
-                  boxShadow: "0 4px 20px rgba(0,87,255,0.4)"
-                }}>Fazer Leilão Agora →</button>
-                <button onClick={() => onNavigate("investor")} style={{
-                  background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.25)",
-                  color: "#fff", padding: "14px 28px", borderRadius: 12, cursor: "pointer",
-                  fontSize: 15, fontWeight: 600, fontFamily: "'DM Sans', sans-serif",
-                  backdropFilter: "blur(10px)"
-                }}>Ver Dashboard Investidor</button>
+              <div style={{ display: "flex", gap: 12 }}>
+                <Btn size="lg" onClick={() => onNavigate("patient")} style={{ background: "#fff", color: C.blue, boxShadow: "0 4px 20px rgba(0,0,0,0.2)" }}>
+                  Enviar Pedido Médico →
+                </Btn>
+                <Btn size="lg" onClick={() => onNavigate("investor")} style={{ background: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", boxShadow: "none" }}>
+                  Ver Dashboard
+                </Btn>
               </div>
-
-              {/* Stats */}
-              <div style={{ display: "flex", gap: 32, marginTop: 48 }}>
-                {[
-                  { v: "2.000+", l: "Laboratórios" },
-                  { v: "R$482k", l: "Economia gerada" },
-                  { v: "73%", l: "Taxa de conversão" },
-                ].map(s => (
+              <div style={{ display: "flex", gap: 40, marginTop: 48 }}>
+                {[{ v: "2.000+", l: "Laboratórios credenciados" }, { v: "R$482k", l: "Economia gerada" }, { v: "73%", l: "Taxa de conversão" }].map(s => (
                   <div key={s.l}>
-                    <div style={{ color: "#00D4FF", fontWeight: 800, fontSize: 24, fontFamily: "'Syne', sans-serif" }}>{s.v}</div>
-                    <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 12 }}>{s.l}</div>
+                    <div style={{ color: "#fff", fontWeight: 800, fontSize: 22, fontFamily: "'Syne', sans-serif" }}>{s.v}</div>
+                    <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, marginTop: 2 }}>{s.l}</div>
                   </div>
                 ))}
               </div>
             </div>
-
-            {/* Live Auctions Panel */}
-            <div style={{
-              background: "rgba(255,255,255,0.05)", borderRadius: 20, border: "1px solid rgba(255,255,255,0.12)",
-              padding: 24, backdropFilter: "blur(20px)"
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>🔴 Leilões ao Vivo</span>
-                <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 12 }}>{LEILOES_ATIVOS.length} ativos agora</span>
+            <Card style={{ overflow: "hidden", border: "1px solid rgba(255,255,255,0.12)" }}>
+              <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.border}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontWeight: 700, fontSize: 13, color: C.text }}>Leilões em andamento</span>
+                <Tag color={C.red} bg={C.redLight}>● {LEILOES_MOCK.length} ativos</Tag>
               </div>
-              {LEILOES_ATIVOS.slice(0, 3).map((l, idx) => (
-                <div key={l.id} onClick={() => setActiveAuction(idx)} style={{
-                  background: activeAuction === idx ? "rgba(0,87,255,0.2)" : "rgba(255,255,255,0.04)",
-                  border: `1px solid ${activeAuction === idx ? "rgba(0,87,255,0.5)" : "rgba(255,255,255,0.08)"}`,
-                  borderRadius: 12, padding: "12px 16px", marginBottom: 8, cursor: "pointer",
-                  transition: "all 0.2s"
-                }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <div>
-                      <div style={{ color: "#fff", fontSize: 12, fontWeight: 600 }}>
-                        {l.exames.slice(0, 2).join(" + ")}{l.exames.length > 2 ? ` +${l.exames.length - 2}` : ""}
+              <div style={{ padding: 12 }}>
+                {LEILOES_MOCK.map((l, i) => (
+                  <div key={l.id} onClick={() => onNavigate("patient")} style={{
+                    padding: 12, borderRadius: 8, marginBottom: 6, cursor: "pointer",
+                    background: i === 0 ? C.blueLight : C.bg,
+                    border: `1px solid ${i === 0 ? C.blue + "30" : C.borderLight}`,
+                  }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: C.text, marginBottom: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {l.exames.slice(0, 2).join(" · ")}{l.exames.length > 2 ? ` +${l.exames.length - 2}` : ""}
+                        </div>
+                        <div style={{ fontSize: 11, color: C.textLight }}>{l.bairro} · {l.lances} lances</div>
                       </div>
-                      <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, marginTop: 2 }}>{l.bairro}, {l.cidade}</div>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      <div style={{ color: "#00D4FF", fontWeight: 800, fontSize: 16 }}>R$ {l.melhorLance}</div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: "flex-end" }}>
-                        <span style={{ color: "rgba(255,255,255,0.35)", fontSize: 10, textDecoration: "line-through" }}>R${l.precoRef}</span>
-                        <span style={{ color: "#4ADE80", fontSize: 10, fontWeight: 700 }}>-{desconto(l.melhorLance, l.precoRef)}%</span>
+                      <div style={{ textAlign: "right", marginLeft: 12 }}>
+                        <div style={{ fontWeight: 800, fontSize: 16, color: C.blue }}>R$ {l.melhorLance}</div>
+                        <Tag color={C.green} bg={C.greenLight}>-{disc(l.melhorLance, l.precoRef)}%</Tag>
                       </div>
                     </div>
+                    <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 6 }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: timers[i] < 300 ? C.red : C.amber, fontFamily: "monospace" }}>⏱ {fmt(timers[i])}</span>
+                    </div>
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
-                    <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 10 }}>{l.lances} lances</span>
-                    <span style={{ color: timers[LEILOES_ATIVOS.indexOf(l)] < 300 ? "#FF6B6B" : "#FFD93D", fontSize: 10, fontWeight: 700 }}>
-                      ⏱ {formatTime(timers[LEILOES_ATIVOS.indexOf(l)])}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+              <div style={{ padding: "12px 16px", borderTop: `1px solid ${C.border}` }}>
+                <Btn style={{ width: "100%" }} onClick={() => onNavigate("patient")}>Iniciar meu leilão →</Btn>
+              </div>
+            </Card>
           </div>
         </div>
       </div>
 
-      {/* How it works */}
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "80px 40px" }}>
         <div style={{ textAlign: "center", marginBottom: 56 }}>
-          <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 38, fontWeight: 800, margin: 0, letterSpacing: "-0.02em" }}>
-            Como funciona em <span style={{ color: "#0057FF" }}>3 passos</span>
-          </h2>
+          <div style={{ fontSize: 12, fontWeight: 600, color: C.blue, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>PROCESSO</div>
+          <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 34, fontWeight: 800, margin: 0, color: C.text, letterSpacing: "-0.02em" }}>Do pedido médico ao resultado em 3 passos</h2>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
           {[
-            { n: "01", icon: "📋", title: "Envie sua receita", desc: "Foto da receita médica ou digita os exames. Nossa IA extrai tudo automaticamente em segundos.", color: "#0057FF" },
-            { n: "02", icon: "⚡", title: "Laboratórios fazem lances", desc: "Laboratórios parceiros próximos a você competem em tempo real pelo seu pedido com preços e horários.", color: "#00C896" },
-            { n: "03", icon: "🏆", title: "Você escolhe e agenda", desc: "Escolha o melhor custo-benefício, pague via Pix ou cartão e receba o resultado no app.", color: "#FF6B35" },
-          ].map(step => (
-            <Card key={step.n} style={{ position: "relative", overflow: "hidden" }}>
-              <div style={{
-                position: "absolute", top: -10, right: -10, fontSize: 80, fontFamily: "'Syne', sans-serif",
-                fontWeight: 900, color: `${step.color}08`, lineHeight: 1
-              }}>{step.n}</div>
-              <div style={{ fontSize: 40, marginBottom: 16 }}>{step.icon}</div>
-              <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 8, fontFamily: "'Syne', sans-serif" }}>{step.title}</div>
-              <div style={{ color: "#666", fontSize: 14, lineHeight: 1.6 }}>{step.desc}</div>
+            { n: "01", icon: "🔍", title: "IA lê seu pedido", desc: "Fotografe ou envie o PDF do seu pedido médico. Nossa IA extrai todos os exames automaticamente.", color: C.blue },
+            { n: "02", icon: "⚡", title: "Laboratórios competem", desc: "Laboratórios credenciados próximos ao seu CEP fazem lances em tempo real pelo seu pedido.", color: C.teal },
+            { n: "03", icon: "✅", title: "Você escolhe e agenda", desc: "Compare preço, distância e avaliações. Confirme com Pix e receba o resultado no app.", color: C.green },
+          ].map(s => (
+            <Card key={s.n} style={{ padding: 28 }}>
+              <div style={{ width: 48, height: 48, borderRadius: 12, background: `${s.color}12`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, marginBottom: 16 }}>{s.icon}</div>
+              <Tag color={s.color} bg={`${s.color}12`}>Passo {s.n}</Tag>
+              <h3 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 18, margin: "10px 0 8px", color: C.text }}>{s.title}</h3>
+              <p style={{ color: C.textMid, fontSize: 14, lineHeight: 1.7, margin: 0 }}>{s.desc}</p>
             </Card>
           ))}
         </div>
       </div>
 
-      {/* CTA Sections */}
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 40px 80px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
-        <div onClick={() => onNavigate("patient")} style={{
-          background: "linear-gradient(135deg, #0057FF, #0041CC)", borderRadius: 20, padding: 40,
-          cursor: "pointer", transition: "transform 0.2s", color: "#fff"
-        }}>
-          <div style={{ fontSize: 40, marginBottom: 16 }}>👤</div>
-          <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: 24, fontWeight: 800, margin: "0 0 12px" }}>Sou Paciente</h3>
-          <p style={{ opacity: 0.8, fontSize: 14, lineHeight: 1.6, margin: "0 0 20px" }}>Faça seus exames com até 60% de desconto. Sem plano de saúde, sem complicação.</p>
-          <span style={{ fontWeight: 700, fontSize: 14 }}>Fazer meu primeiro leilão →</span>
-        </div>
-        <div onClick={() => onNavigate("lab")} style={{
-          background: "linear-gradient(135deg, #0A0E1A, #1A2040)", borderRadius: 20, padding: 40,
-          cursor: "pointer", transition: "transform 0.2s", color: "#fff"
-        }}>
-          <div style={{ fontSize: 40, marginBottom: 16 }}>🔬</div>
-          <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: 24, fontWeight: 800, margin: "0 0 12px" }}>Sou Laboratório</h3>
-          <p style={{ opacity: 0.8, fontSize: 14, lineHeight: 1.6, margin: "0 0 20px" }}>Preencha horários ociosos e aumente sua receita sem custo fixo. Pague só quando vender.</p>
-          <span style={{ fontWeight: 700, fontSize: 14, color: "#00D4FF" }}>Cadastrar meu laboratório →</span>
-        </div>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 40px 80px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+        <Card onClick={() => onNavigate("patient")} style={{ padding: 36, background: C.blue, border: "none", cursor: "pointer" }}>
+          <div style={{ fontSize: 36, marginBottom: 16 }}>👤</div>
+          <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800, margin: "0 0 10px", color: "#fff" }}>Sou Paciente</h3>
+          <p style={{ color: "rgba(255,255,255,0.75)", fontSize: 14, lineHeight: 1.6, margin: "0 0 20px" }}>Envie seu pedido médico e receba propostas de laboratórios credenciados próximos a você.</p>
+          <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>Começar agora →</span>
+        </Card>
+        <Card onClick={() => onNavigate("lab")} style={{ padding: 36, background: "linear-gradient(135deg, #001F4D, #003A8C)", border: "none", cursor: "pointer" }}>
+          <div style={{ fontSize: 36, marginBottom: 16 }}>🔬</div>
+          <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800, margin: "0 0 10px", color: "#fff" }}>Sou Laboratório</h3>
+          <p style={{ color: "rgba(255,255,255,0.65)", fontSize: 14, lineHeight: 1.6, margin: "0 0 20px" }}>Preencha sua capacidade ociosa com novos pacientes. Zero custo fixo.</p>
+          <span style={{ color: "#64B5F6", fontWeight: 700, fontSize: 14 }}>Cadastrar laboratório →</span>
+        </Card>
       </div>
     </div>
   );
 }
 
-// ─── PATIENT FLOW ─────────────────────────────────────────────────────────────
-
 function PatientFlow({ onNavigate }) {
   const [step, setStep] = useState(1);
+  const [cep, setCep] = useState("");
+  const [cepData, setCepData] = useState(null);
+  const [cepLoading, setCepLoading] = useState(false);
+  const [cepError, setCepError] = useState("");
   const [selectedExames, setSelectedExames] = useState([]);
-  const [ocrDone, setOcrDone] = useState(false);
-  const [scanning, setScanning] = useState(false);
-  const [, setAuctionLive] = useState(false);
-  const [selectedWinner, setSelectedWinner] = useState(null);
+  const [ocrState, setOcrState] = useState("idle");
+  const [ocrResult, setOcrResult] = useState("");
+  const [uploadedImage, setUploadedImage] = useState(null);
   const [lances, setLances] = useState([]);
   const [timer, setTimer] = useState(180);
+  const [selectedLance, setSelectedLance] = useState(null);
+  const [exameQuery, setExameQuery] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [auctionStarted, setAuctionStarted] = useState(false);
 
-  const toggleExame = (exame) => {
-    setSelectedExames(prev =>
-      prev.find(e => e.nome === exame.nome)
-        ? prev.filter(e => e.nome !== exame.nome)
-        : [...prev, exame]
-    );
+  const buscarCep = async (valor) => {
+    const limpo = valor.replace(/\D/g, "");
+    if (limpo.length !== 8) return;
+    setCepLoading(true); setCepError("");
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${limpo}/json/`);
+      const data = await res.json();
+      if (data.erro) { setCepError("CEP não encontrado."); setCepData(null); }
+      else setCepData(data);
+    } catch { setCepError("Erro ao buscar CEP."); }
+    setCepLoading(false);
   };
 
-  const startOCR = () => {
-    setScanning(true);
-    setTimeout(() => {
-      setOcrDone(true);
-      setScanning(false);
-      setSelectedExames([EXAMES_POPULARES[0], EXAMES_POPULARES[1], EXAMES_POPULARES[3]]);
-    }, 2000);
+  const handleCepChange = (e) => {
+    let v = e.target.value.replace(/\D/g, "").slice(0, 8);
+    if (v.length > 5) v = v.slice(0, 5) + "-" + v.slice(5);
+    setCep(v);
+    if (v.replace(/\D/g, "").length === 8) buscarCep(v);
+  };
+
+  const processarImagem = async (file) => {
+    setOcrState("uploading");
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const b64 = e.target.result.split(",")[1];
+      setUploadedImage(e.target.result);
+      setOcrState("processing");
+      try {
+        const res = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-20250514",
+            max_tokens: 1000,
+            messages: [{
+              role: "user",
+              content: [
+                { type: "image", source: { type: "base64", media_type: file.type, data: b64 } },
+                { type: "text", text: `Você é um assistente médico. Analise esta imagem de pedido médico. Extraia APENAS os exames laboratoriais solicitados. Responda SOMENTE com JSON: {"exames": ["nome 1", "nome 2"]}. Normalize para o padrão brasileiro. Se não for pedido médico: {"exames": [], "erro": "Não reconhecido como pedido médico"}.` }
+              ]
+            }]
+          })
+        });
+        const data = await res.json();
+        const text = data.content?.map(c => c.text || "").join("") || "";
+        const parsed = JSON.parse(text.replace(/```json|```/g, "").trim());
+        if (parsed.erro) { setOcrState("error"); setOcrResult(parsed.erro); return; }
+        setSelectedExames(parsed.exames || []);
+        setOcrState("done");
+        setOcrResult(`${(parsed.exames || []).length} exame(s) identificado(s)`);
+      } catch {
+        setOcrState("error");
+        setOcrResult("Não foi possível processar. Adicione os exames manualmente.");
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) processarImagem(file);
   };
 
   const launchAuction = () => {
-    setStep(3);
-    setAuctionLive(true);
-    setTimer(180);
-
-    const labsToUse = LABS_DB.filter(l =>
-      selectedExames.every(e => l.especialidades.includes(e.nome)) ||
-      selectedExames.some(e => l.especialidades.includes(e.nome))
-    ).slice(0, 4);
-
-    const precoTotal = selectedExames.reduce((a, e) => a + e.precoRef, 0);
-
-    let delay = 1500;
-    labsToUse.forEach((lab, idx) => {
+    if (auctionStarted) return;
+    setAuctionStarted(true);
+    const precoTotal = selectedExames.length * 38 + 20;
+    let delay = 1200;
+    LABS_MOCK.slice(0, 4).forEach(lab => {
       setTimeout(() => {
-        const reducao = 0.55 + Math.random() * 0.25;
-        const lance = Math.round(precoTotal * reducao);
-        setLances(prev => [...prev, {
-          lab, lance, horarios: ["08:00", "10:30", "14:00", "16:30"].filter(() => Math.random() > 0.4),
-          destaques: ["Resultado em 24h", "Coleta domiciliar disponível", "Acreditação ISO 15189"].filter(() => Math.random() > 0.5)
-        }]);
+        const lance = Math.round(precoTotal * (0.52 + Math.random() * 0.28));
+        setLances(prev => [...prev, { lab, lance, horarios: ["08:00","10:00","14:00","16:30"].filter(() => Math.random() > 0.4) }]);
       }, delay);
-      delay += 800 + Math.random() * 700;
+      delay += 700 + Math.random() * 800;
     });
-
-    const countdown = setInterval(() => {
-      setTimer(t => {
-        if (t <= 1) { clearInterval(countdown); return 0; }
-        return t - 1;
-      });
-    }, 1000);
+    const cd = setInterval(() => setTimer(t => { if (t <= 1) { clearInterval(cd); return 0; } return t - 1; }), 1000);
   };
 
-  const precoTotal = selectedExames.reduce((a, e) => a + e.precoRef, 0);
+  useEffect(() => { if (step === 3) launchAuction(); }, [step]);
+
+  const examesFiltrados = EXAMES_DB.filter(e => e.toLowerCase().includes(exameQuery.toLowerCase()) && !selectedExames.includes(e)).slice(0, 6);
+  const precoRef = selectedExames.length * 38 + 20;
+  const steps = ["Localização", "Exames", "Leilão", "Confirmação"];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#F7F9FF", fontFamily: "'DM Sans', sans-serif" }}>
-      {/* Header */}
-      <div style={{ background: "#fff", borderBottom: "1px solid #F0F2F8", padding: "16px 40px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Logo size={28} />
-        <button onClick={() => onNavigate("home")} style={{ background: "none", border: "1px solid #E0E4F0", borderRadius: 8, padding: "8px 16px", cursor: "pointer", fontSize: 13, fontFamily: "'DM Sans', sans-serif" }}>← Voltar</button>
-      </div>
-
-      {/* Progress Steps */}
-      <div style={{ background: "#fff", borderBottom: "1px solid #F0F2F8", padding: "20px 40px" }}>
-        <div style={{ maxWidth: 700, margin: "0 auto", display: "flex", alignItems: "center", gap: 0 }}>
-          {[
-            { n: 1, l: "Seus Exames" },
-            { n: 2, l: "Lançar Leilão" },
-            { n: 3, l: "Receber Lances" },
-            { n: 4, l: "Confirmar" },
-          ].map((s, i) => (
-            <div key={s.n} style={{ display: "flex", alignItems: "center", flex: i < 3 ? 1 : "none" }}>
+    <div style={{ background: C.bg, minHeight: "100vh" }}>
+      <div style={{ background: C.surface, borderBottom: `1px solid ${C.border}`, padding: "20px 40px" }}>
+        <div style={{ maxWidth: 680, margin: "0 auto", display: "flex", alignItems: "center" }}>
+          {steps.map((s, i) => (
+            <div key={s} style={{ display: "flex", alignItems: "center", flex: i < steps.length - 1 ? 1 : "none" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <div style={{
-                  width: 32, height: 32, borderRadius: "50%",
-                  background: step >= s.n ? (step === s.n ? "#0057FF" : "#4ADE80") : "#F0F2F8",
-                  color: step >= s.n ? "#fff" : "#999", display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 12, fontWeight: 700, transition: "all 0.3s"
-                }}>
-                  {step > s.n ? "✓" : s.n}
-                </div>
-                <span style={{ fontSize: 12, fontWeight: step === s.n ? 700 : 400, color: step === s.n ? "#0057FF" : "#999", whiteSpace: "nowrap" }}>{s.l}</span>
+                <div style={{ width: 28, height: 28, borderRadius: "50%", fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", background: step > i + 1 ? C.green : step === i + 1 ? C.blue : C.borderLight, color: step >= i + 1 ? "#fff" : C.textLight, transition: "all 0.3s" }}>{step > i + 1 ? "✓" : i + 1}</div>
+                <span style={{ fontSize: 13, fontWeight: step === i + 1 ? 700 : 400, color: step === i + 1 ? C.blue : C.textLight, whiteSpace: "nowrap" }}>{s}</span>
               </div>
-              {i < 3 && <div style={{ flex: 1, height: 2, background: step > s.n ? "#4ADE80" : "#F0F2F8", margin: "0 8px", transition: "all 0.3s" }} />}
+              {i < steps.length - 1 && <div style={{ flex: 1, height: 2, margin: "0 10px", background: step > i + 1 ? C.green : C.borderLight, transition: "all 0.3s" }} />}
             </div>
           ))}
         </div>
       </div>
 
-      <div style={{ maxWidth: 700, margin: "0 auto", padding: "40px 24px" }}>
+      <div style={{ maxWidth: 680, margin: "0 auto", padding: "40px 24px" }}>
 
-        {/* STEP 1: Select Exams */}
         {step === 1 && (
           <div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 800, margin: "0 0 8px" }}>Quais exames você precisa?</h2>
-            <p style={{ color: "#888", margin: "0 0 24px" }}>Selecione os exames ou envie sua receita médica</p>
-
-            {/* OCR Upload */}
-            <Card style={{ marginBottom: 24, border: "2px dashed #E0E4F0", background: scanning ? "#F0F7FF" : ocrDone ? "#F0FFF8" : "#FAFBFF" }}>
-              {!ocrDone ? (
-                <div style={{ textAlign: "center", padding: "20px 0" }}>
-                  <div style={{ fontSize: 40, marginBottom: 12 }}>{scanning ? "🔄" : "📄"}</div>
-                  <div style={{ fontWeight: 700, marginBottom: 8 }}>{scanning ? "Analisando com IA..." : "Envie sua receita médica"}</div>
-                  <div style={{ color: "#888", fontSize: 13, marginBottom: 16 }}>Nossa IA extrai os exames automaticamente</div>
-                  {!scanning && (
-                    <button onClick={startOCR} style={{
-                      background: "linear-gradient(135deg, #0057FF, #00D4FF)", color: "#fff",
-                      border: "none", padding: "10px 24px", borderRadius: 10, cursor: "pointer",
-                      fontWeight: 700, fontSize: 14, fontFamily: "'DM Sans', sans-serif"
-                    }}>📸 Simular Upload OCR</button>
-                  )}
-                  {scanning && (
-                    <div style={{ display: "flex", justifyContent: "center", gap: 4 }}>
-                      {[0, 1, 2].map(i => (
-                        <div key={i} style={{
-                          width: 8, height: 8, borderRadius: "50%", background: "#0057FF",
-                          animation: `bounce 1s ease-in-out ${i * 0.2}s infinite alternate`
-                        }} />
-                      ))}
+            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 26, fontWeight: 800, margin: "0 0 6px", color: C.text }}>Qual é a sua localização?</h2>
+            <p style={{ color: C.textMid, margin: "0 0 28px" }}>Usamos seu CEP para encontrar laboratórios parceiros próximos.</p>
+            <Card style={{ padding: 28, marginBottom: 20 }}>
+              <label style={{ fontSize: 13, fontWeight: 600, color: C.text, display: "block", marginBottom: 8 }}>CEP</label>
+              <input value={cep} onChange={handleCepChange} placeholder="00000-000"
+                style={{ width: "100%", padding: "12px 16px", borderRadius: 8, border: `1px solid ${cepError ? C.red : cepData ? C.green : C.border}`, fontSize: 16, fontFamily: "monospace", fontWeight: 600, outline: "none", background: C.surface, color: C.text, boxSizing: "border-box" }}
+              />
+              {cepLoading && <div style={{ marginTop: 8, color: C.textLight, fontSize: 13 }}>Buscando...</div>}
+              {cepError && <div style={{ marginTop: 8, color: C.red, fontSize: 13 }}>⚠ {cepError}</div>}
+              {cepData && (
+                <div style={{ marginTop: 16, padding: "14px 16px", background: C.greenLight, borderRadius: 8, border: `1px solid ${C.green}30` }}>
+                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    <span style={{ fontSize: 18 }}>📍</span>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: 14, color: C.text }}>{cepData.logradouro || "Endereço"}{cepData.bairro ? `, ${cepData.bairro}` : ""}</div>
+                      <div style={{ fontSize: 13, color: C.textMid }}>{cepData.localidade} — {cepData.uf}</div>
                     </div>
-                  )}
-                </div>
-              ) : (
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                    <span style={{ fontSize: 20 }}>✅</span>
-                    <span style={{ fontWeight: 700, color: "#00C896" }}>Receita processada com sucesso</span>
                   </div>
-                  <div style={{ color: "#666", fontSize: 13 }}>3 exames identificados e selecionados automaticamente</div>
+                  <Divider />
+                  <div style={{ fontSize: 13, color: C.textMid }}>🔬 <strong>{LABS_MOCK.length} laboratórios parceiros</strong> encontrados a até 6km</div>
                 </div>
               )}
             </Card>
 
-            {/* Exam Grid */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, marginBottom: 24 }}>
-              {EXAMES_POPULARES.map(exame => {
-                const sel = !!selectedExames.find(e => e.nome === exame.nome);
-                return (
-                  <div key={exame.nome} onClick={() => toggleExame(exame)} style={{
-                    background: sel ? "#F0F7FF" : "#fff", border: `2px solid ${sel ? "#0057FF" : "#F0F2F8"}`,
-                    borderRadius: 12, padding: "12px 16px", cursor: "pointer", transition: "all 0.15s",
-                    display: "flex", alignItems: "center", gap: 10
-                  }}>
-                    <span style={{ fontSize: 20 }}>{exame.icon}</span>
+            {cepData && (
+              <div style={{ marginBottom: 24 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: C.textMid, marginBottom: 12 }}>Laboratórios próximos</div>
+                {LABS_MOCK.slice(0, 3).map(lab => (
+                  <Card key={lab.id} style={{ padding: "14px 16px", marginBottom: 8, display: "flex", alignItems: "center", gap: 12 }}>
+                    <LabInitial nome={lab.nome} color={lab.logoColor} />
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: sel ? "#0057FF" : "#333" }}>{exame.nome}</div>
-                      <div style={{ fontSize: 11, color: "#888" }}>Ref: R$ {exame.precoRef}</div>
+                      <div style={{ fontWeight: 600, fontSize: 14, color: C.text }}>{lab.nome}</div>
+                      <div style={{ fontSize: 12, color: C.textLight }}>{lab.distancia}km · {lab.bairro}</div>
                     </div>
-                    {sel && <span style={{ color: "#0057FF", fontWeight: 700 }}>✓</span>}
-                  </div>
-                );
-              })}
-            </div>
+                    <div style={{ textAlign: "right" }}>
+                      <Stars rating={lab.rating} />
+                      <div style={{ marginTop: 4 }}><Tag color={C.blue} bg={C.blueLight}>{lab.acreditacao}</Tag></div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
 
-            {selectedExames.length > 0 && (
-              <div style={{
-                position: "sticky", bottom: 20, background: "#fff", border: "1px solid #F0F2F8",
-                borderRadius: 16, padding: 20, boxShadow: "0 8px 40px rgba(0,0,0,0.12)"
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>
-                    <div style={{ fontWeight: 700 }}>{selectedExames.length} exame{selectedExames.length > 1 ? "s" : ""} selecionado{selectedExames.length > 1 ? "s" : ""}</div>
-                    <div style={{ fontSize: 12, color: "#888" }}>Preço tabela: <span style={{ textDecoration: "line-through" }}>R$ {precoTotal}</span></div>
-                  </div>
-                  <button onClick={() => setStep(2)} style={{
-                    background: "linear-gradient(135deg, #0057FF, #00D4FF)", color: "#fff",
-                    border: "none", padding: "12px 24px", borderRadius: 10, cursor: "pointer",
-                    fontWeight: 700, fontSize: 14, fontFamily: "'DM Sans', sans-serif"
-                  }}>Continuar →</button>
-                </div>
+            <Btn size="lg" onClick={() => setStep(2)} disabled={!cepData} style={{ width: "100%" }}>Continuar →</Btn>
+            {!cepData && (
+              <div style={{ textAlign: "center", marginTop: 12 }}>
+                <button onClick={() => setStep(2)} style={{ background: "none", border: "none", color: C.textLight, fontSize: 13, cursor: "pointer", textDecoration: "underline" }}>Pular e continuar sem CEP</button>
               </div>
             )}
           </div>
         )}
 
-        {/* STEP 2: Launch Auction */}
         {step === 2 && (
           <div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 800, margin: "0 0 8px" }}>Configurar seu Leilão</h2>
-            <p style={{ color: "#888", margin: "0 0 24px" }}>Revise e lance o leilão para os laboratórios próximos</p>
+            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 26, fontWeight: 800, margin: "0 0 6px", color: C.text }}>Quais exames você precisa?</h2>
+            <p style={{ color: C.textMid, margin: "0 0 24px" }}>Envie seu pedido médico ou adicione os exames manualmente.</p>
 
-            <Card style={{ marginBottom: 20 }}>
-              <div style={{ fontWeight: 700, marginBottom: 12 }}>📋 Exames selecionados</div>
-              {selectedExames.map(e => (
-                <div key={e.nome} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #F8F8F8" }}>
-                  <span style={{ fontSize: 14 }}>{e.icon} {e.nome}</span>
-                  <span style={{ fontWeight: 600, color: "#888", fontSize: 13, textDecoration: "line-through" }}>R$ {e.precoRef}</span>
-                </div>
-              ))}
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, paddingTop: 12, borderTop: "2px solid #F0F2F8" }}>
-                <span style={{ fontWeight: 700 }}>Total (tabela)</span>
-                <span style={{ fontWeight: 800, color: "#888", textDecoration: "line-through" }}>R$ {precoTotal}</span>
+            <Card style={{ marginBottom: 20, overflow: "hidden" }}>
+              <div style={{ padding: "14px 20px", borderBottom: `1px solid ${C.borderLight}`, display: "flex", alignItems: "center", gap: 8 }}>
+                <span>🤖</span>
+                <span style={{ fontWeight: 700, fontSize: 14, color: C.text }}>Leitura automática por IA</span>
+                <Tag color={C.blue} bg={C.blueLight}>Recomendado</Tag>
               </div>
+
+              {ocrState === "idle" && (
+                <label style={{ display: "block", cursor: "pointer" }}>
+                  <input type="file" accept="image/*,.pdf" onChange={handleFileChange} style={{ display: "none" }} />
+                  <div style={{ padding: "32px", textAlign: "center", margin: 16, borderRadius: 10, border: `2px dashed ${C.border}`, background: C.bg }}>
+                    <div style={{ fontSize: 40, marginBottom: 12 }}>📄</div>
+                    <div style={{ fontWeight: 600, color: C.text, marginBottom: 6 }}>Clique para enviar o pedido médico</div>
+                    <div style={{ color: C.textLight, fontSize: 13 }}>JPG, PNG ou PDF · A IA extrai os exames automaticamente</div>
+                  </div>
+                </label>
+              )}
+
+              {(ocrState === "uploading" || ocrState === "processing") && (
+                <div style={{ padding: "32px", textAlign: "center" }}>
+                  <div style={{ fontSize: 40, marginBottom: 12 }}>{ocrState === "uploading" ? "📤" : "🔍"}</div>
+                  <div style={{ fontWeight: 600, color: C.text, marginBottom: 6 }}>{ocrState === "uploading" ? "Enviando..." : "IA analisando pedido médico..."}</div>
+                  <div style={{ color: C.textLight, fontSize: 13 }}>Aguarde alguns segundos</div>
+                </div>
+              )}
+
+              {ocrState === "done" && (
+                <div style={{ padding: 20 }}>
+                  {uploadedImage && <img src={uploadedImage} alt="Pedido" style={{ width: "100%", maxHeight: 160, objectFit: "cover", borderRadius: 8, marginBottom: 12 }} />}
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", background: C.greenLight, borderRadius: 8 }}>
+                    <span>✅</span><span style={{ fontWeight: 600, color: C.green, fontSize: 14 }}>{ocrResult}</span>
+                  </div>
+                </div>
+              )}
+
+              {ocrState === "error" && (
+                <div style={{ padding: 20 }}>
+                  <div style={{ padding: "10px 14px", background: C.amberLight, borderRadius: 8, marginBottom: 12, fontSize: 13, color: C.amber }}>⚠️ {ocrResult}</div>
+                  <label style={{ cursor: "pointer" }}>
+                    <input type="file" accept="image/*,.pdf" onChange={handleFileChange} style={{ display: "none" }} />
+                    <Btn variant="ghost" size="sm">Tentar novamente</Btn>
+                  </label>
+                </div>
+              )}
             </Card>
 
-            <Card style={{ marginBottom: 20, background: "linear-gradient(135deg, #F0F7FF, #E8F0FF)" }}>
-              <div style={{ fontWeight: 700, marginBottom: 12 }}>⚡ Yield Engine — Previsão</div>
-              <div style={{ display: "flex", gap: 20 }}>
-                <div>
-                  <div style={{ fontSize: 11, color: "#666", marginBottom: 4 }}>Economia esperada</div>
-                  <div style={{ fontWeight: 900, fontSize: 28, color: "#0057FF", fontFamily: "'Syne', sans-serif" }}>~{Math.round(30 + Math.random() * 20)}%</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: 11, color: "#666", marginBottom: 4 }}>Labs disponíveis (5km)</div>
-                  <div style={{ fontWeight: 900, fontSize: 28, color: "#00C896", fontFamily: "'Syne', sans-serif" }}>{3 + Math.floor(Math.random() * 4)}</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: 11, color: "#666", marginBottom: 4 }}>Duração do leilão</div>
-                  <div style={{ fontWeight: 900, fontSize: 28, color: "#FF6B35", fontFamily: "'Syne', sans-serif" }}>3 min</div>
-                </div>
+            <Card style={{ padding: 20, marginBottom: 20 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, color: C.text, marginBottom: 12 }}>Adicionar exames manualmente</div>
+              <div style={{ position: "relative" }}>
+                <input value={exameQuery} onChange={e => { setExameQuery(e.target.value); setShowSuggestions(true); }} onFocus={() => setShowSuggestions(true)} placeholder="Digite o nome do exame..."
+                  style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: `1px solid ${C.border}`, fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" }}
+                />
+                {showSuggestions && exameQuery && examesFiltrados.length > 0 && (
+                  <div style={{ position: "absolute", top: "100%", left: 0, right: 0, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 8, boxShadow: C.shadowMd, zIndex: 50, marginTop: 4 }}>
+                    {examesFiltrados.map(e => (
+                      <div key={e} onClick={() => { setSelectedExames(prev => [...prev, e]); setExameQuery(""); setShowSuggestions(false); }}
+                        style={{ padding: "10px 14px", fontSize: 14, cursor: "pointer", borderBottom: `1px solid ${C.borderLight}`, color: C.text }}
+                        onMouseEnter={ev => ev.currentTarget.style.background = C.bg}
+                        onMouseLeave={ev => ev.currentTarget.style.background = "transparent"}
+                      >{e}</div>
+                    ))}
+                  </div>
+                )}
               </div>
-              <div style={{ marginTop: 12, padding: "8px 12px", background: "rgba(0,87,255,0.08)", borderRadius: 8, fontSize: 12, color: "#0057FF" }}>
-                💡 Horário ideal detectado: laboratórios têm alta ociosidade nesse momento
-              </div>
+              {selectedExames.length > 0 && (
+                <div style={{ marginTop: 16 }}>
+                  <div style={{ fontSize: 12, color: C.textLight, marginBottom: 8 }}>Exames selecionados:</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    {selectedExames.map(e => (
+                      <div key={e} style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 10px 5px 12px", background: C.blueLight, borderRadius: 20, border: `1px solid ${C.blue}30` }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: C.blue }}>{e}</span>
+                        <button onClick={() => setSelectedExames(prev => prev.filter(x => x !== e))} style={{ background: "none", border: "none", cursor: "pointer", color: C.blue, fontSize: 14, lineHeight: 1, padding: 0 }}>×</button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </Card>
 
-            <div style={{ display: "flex", gap: 12 }}>
-              <button onClick={() => setStep(1)} style={{
-                background: "#F0F2F8", border: "none", padding: "14px 20px", borderRadius: 10, cursor: "pointer",
-                fontWeight: 600, fontSize: 14, fontFamily: "'DM Sans', sans-serif", color: "#666"
-              }}>← Voltar</button>
-              <button onClick={launchAuction} style={{
-                flex: 1, background: "linear-gradient(135deg, #0057FF, #00D4FF)", color: "#fff",
-                border: "none", padding: "14px", borderRadius: 10, cursor: "pointer",
-                fontWeight: 800, fontSize: 16, fontFamily: "'DM Sans', sans-serif",
-                boxShadow: "0 4px 20px rgba(0,87,255,0.35)"
-              }}>🚀 Lançar Leilão Agora</button>
-            </div>
+            {selectedExames.length > 0 && (
+              <div style={{ position: "sticky", bottom: 20, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: 20, boxShadow: C.shadowMd }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontWeight: 700, color: C.text }}>{selectedExames.length} exame(s)</div>
+                    <div style={{ fontSize: 12, color: C.textLight }}>Tabela: <span style={{ textDecoration: "line-through" }}>R$ {precoRef}</span></div>
+                  </div>
+                  <Btn size="lg" onClick={() => setStep(3)}>Lançar Leilão →</Btn>
+                </div>
+              </div>
+            )}
+            <button onClick={() => setStep(1)} style={{ background: "none", border: "none", color: C.textLight, fontSize: 13, cursor: "pointer", marginTop: 16 }}>← Voltar</button>
           </div>
         )}
 
-        {/* STEP 3: Live Auction */}
         {step === 3 && (
           <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
               <div>
-                <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 26, fontWeight: 800, margin: "0 0 4px" }}>Leilão ao Vivo 🔴</h2>
-                <p style={{ color: "#888", margin: 0, fontSize: 14 }}>Laboratórios estão fazendo seus lances...</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: C.red }} />
+                  <span style={{ fontWeight: 700, fontSize: 13, color: C.red }}>Leilão em andamento</span>
+                </div>
+                <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 24, fontWeight: 800, margin: 0, color: C.text }}>Recebendo propostas</h2>
+                <div style={{ fontSize: 13, color: C.textLight, marginTop: 4 }}>{selectedExames.slice(0, 2).join(" · ")}{selectedExames.length > 2 ? ` +${selectedExames.length - 2}` : ""}</div>
               </div>
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 11, color: "#888" }}>Encerra em</div>
-                <div style={{ fontWeight: 800, fontSize: 24, color: timer < 60 ? "#FF3B30" : "#0057FF", fontFamily: "monospace" }}>
-                  {formatTime(timer)}
-                </div>
+                <div style={{ fontSize: 11, color: C.textLight }}>Encerra em</div>
+                <div style={{ fontWeight: 800, fontSize: 28, color: timer < 60 ? C.red : C.blue, fontFamily: "monospace" }}>{fmt(timer)}</div>
               </div>
             </div>
-
-            {/* Progress bar */}
-            <div style={{ height: 4, background: "#F0F2F8", borderRadius: 2, marginBottom: 24, overflow: "hidden" }}>
-              <div style={{
-                height: "100%", background: timer < 60 ? "#FF3B30" : "linear-gradient(90deg, #0057FF, #00D4FF)",
-                width: `${(timer / 180) * 100}%`, transition: "width 1s linear", borderRadius: 2
-              }} />
+            <div style={{ height: 4, background: C.borderLight, borderRadius: 2, marginBottom: 24, overflow: "hidden" }}>
+              <div style={{ height: "100%", borderRadius: 2, background: timer < 60 ? C.red : C.blue, width: `${(timer / 180) * 100}%`, transition: "width 1s linear" }} />
             </div>
 
             {lances.length === 0 && (
-              <Card style={{ textAlign: "center", padding: 40 }}>
-                <div style={{ fontSize: 40, marginBottom: 12 }}>📡</div>
-                <div style={{ fontWeight: 700, marginBottom: 8 }}>Aguardando lances...</div>
-                <div style={{ color: "#888", fontSize: 13 }}>Laboratórios próximos foram notificados</div>
+              <Card style={{ padding: 40, textAlign: "center" }}>
+                <div style={{ fontSize: 36, marginBottom: 12 }}>📡</div>
+                <div style={{ fontWeight: 600, color: C.text }}>Notificando laboratórios próximos...</div>
               </Card>
             )}
 
             {lances.map((l, idx) => (
-              <div key={idx} onClick={() => setSelectedWinner(idx)} style={{
-                background: selectedWinner === idx ? "#F0F7FF" : "#fff",
-                border: `2px solid ${selectedWinner === idx ? "#0057FF" : idx === 0 ? "#4ADE80" : "#F0F2F8"}`,
-                borderRadius: 16, padding: 20, marginBottom: 12, cursor: "pointer",
-                transition: "all 0.2s",
-                animation: "slideIn 0.4s ease-out"
+              <Card key={idx} onClick={() => setSelectedLance(idx)} style={{
+                padding: 20, marginBottom: 10,
+                border: `2px solid ${selectedLance === idx ? C.blue : idx === 0 ? C.green + "50" : C.border}`,
+                background: selectedLance === idx ? C.blueLight : C.surface, cursor: "pointer"
               }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <div style={{
-                      width: 44, height: 44, borderRadius: 12,
-                      background: `linear-gradient(135deg, ${l.lab.logoColor}, ${l.lab.logoColor}88)`,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: 18, color: "#fff", fontWeight: 800
-                    }}>{l.lab.nome[0]}</div>
+                  <div style={{ display: "flex", gap: 12 }}>
+                    <LabInitial nome={l.lab.nome} color={l.lab.logoColor} />
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: 14 }}>{l.lab.nome}</div>
-                      <div style={{ color: "#888", fontSize: 12 }}>{l.lab.distancia}km · {l.lab.bairro}</div>
-                      <div style={{ display: "flex", gap: 4, marginTop: 4 }}>
-                        <span style={{ fontSize: 10, color: "#FFB800" }}>{"★".repeat(Math.floor(l.lab.rating))}</span>
-                        <span style={{ fontSize: 10, color: "#888" }}>{l.lab.rating} ({l.lab.reviews})</span>
-                      </div>
+                      <div style={{ fontWeight: 700, fontSize: 14, color: C.text }}>{l.lab.nome}</div>
+                      <div style={{ fontSize: 12, color: C.textLight }}>{l.lab.distancia}km · {l.lab.bairro}</div>
+                      <Stars rating={l.lab.rating} />
                     </div>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <div style={{ fontWeight: 900, fontSize: 28, color: "#0057FF", fontFamily: "'Syne', sans-serif" }}>R$ {l.lance}</div>
-                    <Badge color="#00C896">-{desconto(l.lance, precoTotal)}% desc.</Badge>
+                    <div style={{ fontWeight: 900, fontSize: 26, color: C.blue, fontFamily: "'Syne', sans-serif" }}>R$ {l.lance}</div>
+                    <Tag color={C.green} bg={C.greenLight}>-{disc(l.lance, precoRef)}% desc.</Tag>
+                    {idx === 0 && <div style={{ marginTop: 4 }}><Tag color={C.amber} bg={C.amberLight}>🏆 Melhor oferta</Tag></div>}
                   </div>
                 </div>
-                {l.destaques.length > 0 && (
-                  <div style={{ display: "flex", gap: 6, marginTop: 12, flexWrap: "wrap" }}>
-                    {l.destaques.map(d => <Badge key={d} color="#666" bg="#F5F5F5">{d}</Badge>)}
-                  </div>
-                )}
                 {l.horarios.length > 0 && (
-                  <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
-                    <span style={{ fontSize: 11, color: "#888" }}>Horários: </span>
-                    {l.horarios.map(h => (
-                      <span key={h} style={{ fontSize: 11, fontWeight: 600, background: "#F0F7FF", color: "#0057FF", padding: "2px 6px", borderRadius: 4 }}>{h}</span>
-                    ))}
+                  <div style={{ marginTop: 10, display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    <span style={{ fontSize: 11, color: C.textLight, alignSelf: "center" }}>Horários:</span>
+                    {l.horarios.map(h => <Tag key={h} color={C.blue} bg={C.blueLight}>{h}</Tag>)}
                   </div>
                 )}
-                {idx === 0 && <div style={{ marginTop: 8 }}><Badge color="#00C896">🏆 Melhor oferta</Badge></div>}
-              </div>
+                <div style={{ marginTop: 8, display: "flex", gap: 6 }}>
+                  <Tag color={C.textMid} bg={C.bg}>{l.lab.acreditacao}</Tag>
+                  <Tag color={C.textMid} bg={C.bg}>Resultado em 24h</Tag>
+                </div>
+              </Card>
             ))}
 
-            {lances.length > 0 && selectedWinner !== null && (
-              <button onClick={() => setStep(4)} style={{
-                width: "100%", background: "linear-gradient(135deg, #00C896, #00A878)", color: "#fff",
-                border: "none", padding: "16px", borderRadius: 12, cursor: "pointer",
-                fontWeight: 800, fontSize: 16, fontFamily: "'DM Sans', sans-serif", marginTop: 16,
-                boxShadow: "0 4px 20px rgba(0,200,150,0.35)"
-              }}>✅ Aceitar Lance de R$ {lances[selectedWinner]?.lance} →</button>
+            {lances.length > 0 && selectedLance !== null && (
+              <Btn size="lg" onClick={() => setStep(4)} style={{ width: "100%", marginTop: 8 }}>
+                ✅ Confirmar proposta de R$ {lances[selectedLance]?.lance} →
+              </Btn>
             )}
           </div>
         )}
 
-        {/* STEP 4: Confirmation */}
         {step === 4 && (
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 72, marginBottom: 20 }}>🎉</div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 32, fontWeight: 800, margin: "0 0 12px" }}>Exame Agendado!</h2>
-            <p style={{ color: "#888", marginBottom: 32 }}>Seu leilão foi um sucesso. Você economizou:</p>
-
-            <div style={{
-              background: "linear-gradient(135deg, #0057FF, #00D4FF)", borderRadius: 20, padding: 32,
-              color: "#fff", marginBottom: 24, display: "inline-block", minWidth: 280
-            }}>
-              <div style={{ fontSize: 13, opacity: 0.8, marginBottom: 4 }}>Preço tabela</div>
-              <div style={{ fontSize: 22, textDecoration: "line-through", opacity: 0.6, fontFamily: "monospace" }}>R$ {precoTotal}</div>
-              <div style={{ fontSize: 13, opacity: 0.8, marginTop: 12, marginBottom: 4 }}>Você vai pagar</div>
-              <div style={{ fontSize: 48, fontWeight: 900, fontFamily: "'Syne', sans-serif" }}>
-                R$ {lances[selectedWinner]?.lance || Math.round(precoTotal * 0.6)}
+            <div style={{ width: 80, height: 80, borderRadius: "50%", background: C.greenLight, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, margin: "0 auto 24px" }}>✅</div>
+            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 10px", color: C.text }}>Exame Confirmado!</h2>
+            <p style={{ color: C.textMid, marginBottom: 32 }}>Agendamento realizado com sucesso.</p>
+            <Card style={{ padding: 28, marginBottom: 20, textAlign: "left" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+                <span style={{ color: C.textMid }}>Preço de tabela</span>
+                <span style={{ textDecoration: "line-through", color: C.textLight }}>R$ {precoRef}</span>
               </div>
-              <div style={{ marginTop: 8, fontSize: 16, fontWeight: 700, color: "#4ADE80" }}>
-                Economia: R$ {precoTotal - (lances[selectedWinner]?.lance || Math.round(precoTotal * 0.6))} ({desconto(lances[selectedWinner]?.lance || Math.round(precoTotal * 0.6), precoTotal)}% off)
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+                <span style={{ fontWeight: 700, fontSize: 16, color: C.text }}>Você vai pagar</span>
+                <span style={{ fontWeight: 900, fontSize: 24, color: C.blue, fontFamily: "'Syne', sans-serif" }}>R$ {lances[selectedLance]?.lance || Math.round(precoRef * 0.62)}</span>
               </div>
-            </div>
-
+              <Divider />
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: C.textMid }}>Economia</span>
+                <Tag color={C.green} bg={C.greenLight}>R$ {precoRef - (lances[selectedLance]?.lance || Math.round(precoRef * 0.62))} ({disc(lances[selectedLance]?.lance || Math.round(precoRef * 0.62), precoRef)}% off)</Tag>
+              </div>
+            </Card>
             <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-              <button onClick={() => { setStep(1); setSelectedExames([]); setLances([]); setSelectedWinner(null); setOcrDone(false); }} style={{
-                background: "#F0F2F8", border: "none", padding: "12px 24px", borderRadius: 10, cursor: "pointer",
-                fontWeight: 600, fontFamily: "'DM Sans', sans-serif"
-              }}>Novo Leilão</button>
-              <button onClick={() => onNavigate("home")} style={{
-                background: "linear-gradient(135deg, #0057FF, #00D4FF)", color: "#fff", border: "none",
-                padding: "12px 24px", borderRadius: 10, cursor: "pointer",
-                fontWeight: 700, fontFamily: "'DM Sans', sans-serif"
-              }}>Voltar ao Início</button>
+              <Btn variant="ghost" onClick={() => { setStep(1); setSelectedExames([]); setLances([]); setSelectedLance(null); setOcrState("idle"); setCep(""); setCepData(null); setAuctionStarted(false); setTimer(180); }}>Novo leilão</Btn>
+              <Btn onClick={() => onNavigate("home")}>Voltar ao início</Btn>
             </div>
           </div>
         )}
@@ -683,118 +640,82 @@ function PatientFlow({ onNavigate }) {
   );
 }
 
-// ─── LAB DASHBOARD ────────────────────────────────────────────────────────────
-
 function LabDashboard({ onNavigate }) {
-  const lab = LABS_DB[0];
-  const [activeTab, setActiveTab] = useState("oportunidades");
-  const [bidValue, setBidValue] = useState(null);
+  const lab = LABS_MOCK[0];
+  const [tab, setTab] = useState("oportunidades");
+  const [bidding, setBidding] = useState(null);
+  const [timers, setTimers] = useState(LEILOES_MOCK.map(l => l.timer));
+  useEffect(() => {
+    const t = setInterval(() => setTimers(p => p.map(s => Math.max(0, s - 1))), 1000);
+    return () => clearInterval(t);
+  }, []);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#F7F9FF", fontFamily: "'DM Sans', sans-serif", display: "flex" }}>
-      {/* Sidebar */}
-      <div style={{ width: 220, background: "#0A0E1A", minHeight: "100vh", padding: "24px 0", position: "sticky", top: 0 }}>
-        <div style={{ padding: "0 20px 24px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-          <Logo size={24} />
+    <div style={{ display: "flex", minHeight: "100vh", background: C.bg }}>
+      <div style={{ width: 220, background: "#001F4D", minHeight: "100vh", position: "sticky", top: 64, flexShrink: 0 }}>
+        <div style={{ padding: "24px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>Painel do Laboratório</div>
+          <div style={{ fontWeight: 700, fontSize: 13, color: "#fff", marginTop: 4 }}>{lab.nome.split(" ").slice(0, 2).join(" ")}</div>
         </div>
-        <div style={{ marginTop: 8 }}>
-          {[
-            { id: "oportunidades", icon: "⚡", label: "Oportunidades" },
-            { id: "lances", icon: "🏆", label: "Meus Lances" },
-            { id: "agenda", icon: "📅", label: "Agenda" },
-            { id: "financeiro", icon: "💰", label: "Financeiro" },
-            { id: "perfil", icon: "⚙️", label: "Meu Lab" },
-          ].map(item => (
-            <div key={item.id} onClick={() => setActiveTab(item.id)} style={{
-              display: "flex", alignItems: "center", gap: 10, padding: "12px 20px", cursor: "pointer",
-              background: activeTab === item.id ? "rgba(0,87,255,0.2)" : "transparent",
-              borderLeft: activeTab === item.id ? "3px solid #0057FF" : "3px solid transparent",
-              transition: "all 0.15s"
-            }}>
-              <span style={{ fontSize: 16 }}>{item.icon}</span>
-              <span style={{ color: activeTab === item.id ? "#fff" : "rgba(255,255,255,0.5)", fontSize: 13, fontWeight: activeTab === item.id ? 700 : 400 }}>{item.label}</span>
-            </div>
+        <nav style={{ padding: "12px 0" }}>
+          {[{ id: "oportunidades", icon: "⚡", label: "Oportunidades" }, { id: "financeiro", icon: "💰", label: "Financeiro" }, { id: "perfil", icon: "⚙️", label: "Meu Laboratório" }].map(item => (
+            <button key={item.id} onClick={() => setTab(item.id)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "11px 20px", background: tab === item.id ? "rgba(100,181,246,0.15)" : "transparent", borderLeft: `3px solid ${tab === item.id ? "#64B5F6" : "transparent"}`, border: "none", cursor: "pointer", color: tab === item.id ? "#fff" : "rgba(255,255,255,0.5)", fontSize: 13, fontWeight: tab === item.id ? 600 : 400, fontFamily: "'DM Sans', sans-serif", textAlign: "left" }}>
+              <span>{item.icon}</span>{item.label}
+            </button>
           ))}
-        </div>
-        <div style={{ position: "absolute", bottom: 20, left: 20, right: 20 }}>
-          <button onClick={() => onNavigate("home")} style={{
-            width: "100%", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.1)",
-            color: "rgba(255,255,255,0.5)", padding: "10px", borderRadius: 8, cursor: "pointer",
-            fontSize: 12, fontFamily: "'DM Sans', sans-serif"
-          }}>← Sair</button>
+        </nav>
+        <div style={{ position: "absolute", bottom: 20, left: 16, right: 16 }}>
+          <button onClick={() => onNavigate("home")} style={{ width: "100%", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.4)", padding: 9, borderRadius: 8, cursor: "pointer", fontSize: 12, fontFamily: "'DM Sans', sans-serif" }}>← Sair</button>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div style={{ flex: 1, padding: "32px 32px" }}>
+      <div style={{ flex: 1, padding: 32 }}>
         <div style={{ marginBottom: 28 }}>
-          <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 24, fontWeight: 800, margin: "0 0 4px" }}>
-            {activeTab === "oportunidades" ? "⚡ Leilões Disponíveis" :
-             activeTab === "lances" ? "🏆 Histórico de Lances" :
-             activeTab === "financeiro" ? "💰 Painel Financeiro" : "Dashboard"}
-          </h1>
-          <p style={{ color: "#888", margin: 0, fontSize: 14 }}>{lab.nome} · {lab.bairro}</p>
+          <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800, margin: "0 0 4px", color: C.text }}>{lab.nome}</h1>
+          <div style={{ color: C.textLight, fontSize: 13 }}>{lab.bairro} · Ocupação: {pct(lab.ocupacao, lab.capacidade)}%</div>
         </div>
 
-        {/* Top Stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 28 }}>
           {[
-            { label: "Ocupação Atual", value: `${pct(lab.ocupacao, lab.capacidade)}%`, sub: "Capacidade ociosa disponível", color: "#0057FF", icon: "📊" },
-            { label: "Leilões Ganhos", value: "23", sub: "Este mês", color: "#00C896", icon: "🏆" },
-            { label: "Receita Extra", value: "R$ 4.820", sub: "Via CheckApp", color: "#FF6B35", icon: "💰" },
-            { label: "Horários Livres", value: `${lab.capacidade - lab.ocupacao}`, sub: "Hoje à tarde", color: "#9B59B6", icon: "🕐" },
+            { label: "Capacidade Ociosa", value: `${lab.capacidade - lab.ocupacao}`, sub: "horários livres hoje", color: C.blue, icon: "🕐" },
+            { label: "Lances Ganhos", value: "23", sub: "este mês", color: C.green, icon: "🏆" },
+            { label: "Receita via CheckApp", value: "R$ 4.820", sub: "+34% vs mês anterior", color: C.teal, icon: "💰" },
+            { label: "Taxa de Conversão", value: "68%", sub: "dos leilões disputados", color: C.amber, icon: "📈" },
           ].map(s => (
-            <Card key={s.label}>
-              <div style={{ fontSize: 24, marginBottom: 8 }}>{s.icon}</div>
+            <Card key={s.label} style={{ padding: 20 }}>
+              <div style={{ fontSize: 22, marginBottom: 8 }}>{s.icon}</div>
               <div style={{ fontSize: 24, fontWeight: 900, color: s.color, fontFamily: "'Syne', sans-serif" }}>{s.value}</div>
-              <div style={{ fontWeight: 600, fontSize: 13, marginTop: 2 }}>{s.label}</div>
-              <div style={{ color: "#888", fontSize: 11, marginTop: 2 }}>{s.sub}</div>
+              <div style={{ fontWeight: 600, fontSize: 13, color: C.text, marginTop: 2 }}>{s.label}</div>
+              <div style={{ color: C.textLight, fontSize: 11, marginTop: 2 }}>{s.sub}</div>
             </Card>
           ))}
         </div>
 
-        {activeTab === "oportunidades" && (
+        {tab === "oportunidades" && (
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <div style={{ fontWeight: 700 }}>Leilões próximos de você ({LEILOES_ATIVOS.length})</div>
-              <Badge color="#FF3B30" bg="#FF3B3015">🔴 Ao vivo</Badge>
+              <div style={{ fontWeight: 700, color: C.text }}>Leilões disponíveis agora</div>
+              <Tag color={C.red} bg={C.redLight}>● {LEILOES_MOCK.length} ao vivo</Tag>
             </div>
-            {LEILOES_ATIVOS.map(leilao => (
-              <Card key={leilao.id} style={{ marginBottom: 12 }}>
+            {LEILOES_MOCK.map((l, i) => (
+              <Card key={l.id} style={{ padding: 20, marginBottom: 10 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                   <div>
-                    <div style={{ fontWeight: 700, marginBottom: 4 }}>{leilao.exames.join(" + ")}</div>
-                    <div style={{ color: "#888", fontSize: 12 }}>{leilao.bairro} · {leilao.lances} lance{leilao.lances !== 1 ? "s" : ""} até agora</div>
-                    <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
-                      <span style={{ fontSize: 11, background: "#F0F7FF", color: "#0057FF", padding: "3px 8px", borderRadius: 6, fontWeight: 600 }}>
-                        Melhor lance: R$ {leilao.melhorLance}
-                      </span>
-                      <span style={{ fontSize: 11, background: "#FFF7F0", color: "#FF6B35", padding: "3px 8px", borderRadius: 6, fontWeight: 600 }}>
-                        Ref: R$ {leilao.precoRef}
-                      </span>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: C.text, marginBottom: 4 }}>{l.exames.join(" · ")}</div>
+                    <div style={{ fontSize: 12, color: C.textLight }}>{l.bairro} · {l.lances} lance(s)</div>
+                    <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                      <Tag color={C.blue} bg={C.blueLight}>Melhor: R$ {l.melhorLance}</Tag>
+                      <Tag color={C.textMid} bg={C.bg}>Ref: R$ {l.precoRef}</Tag>
                     </div>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 11, color: "#888", marginBottom: 4 }}>Encerra em</div>
-                    <div style={{ fontWeight: 800, color: leilao.tempoRestante < 300 ? "#FF3B30" : "#0057FF", fontFamily: "monospace", fontSize: 18 }}>
-                      {formatTime(leilao.tempoRestante)}
-                    </div>
+                    <div style={{ fontSize: 11, color: C.textLight, marginBottom: 4 }}>Encerra em</div>
+                    <div style={{ fontWeight: 800, fontSize: 20, color: timers[i] < 300 ? C.red : C.blue, fontFamily: "monospace" }}>{fmt(timers[i])}</div>
                     <div style={{ marginTop: 8 }}>
-                      {bidValue === leilao.id ? (
-                        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                          <input type="number" defaultValue={leilao.melhorLance - 3}
-                            style={{ width: 70, padding: "6px 8px", borderRadius: 8, border: "2px solid #0057FF", fontSize: 13, fontWeight: 700, fontFamily: "'DM Sans', sans-serif" }} />
-                          <button onClick={() => setBidValue(null)} style={{
-                            background: "#0057FF", color: "#fff", border: "none", padding: "7px 12px",
-                            borderRadius: 8, cursor: "pointer", fontSize: 12, fontWeight: 700, fontFamily: "'DM Sans', sans-serif"
-                          }}>Dar Lance</button>
-                        </div>
+                      {bidding === l.id ? (
+                        <Btn variant="success" size="sm" onClick={() => setBidding(null)}>✓ Lance enviado!</Btn>
                       ) : (
-                        <button onClick={() => setBidValue(leilao.id)} style={{
-                          background: "linear-gradient(135deg, #0057FF, #00D4FF)", color: "#fff",
-                          border: "none", padding: "8px 16px", borderRadius: 8, cursor: "pointer",
-                          fontSize: 12, fontWeight: 700, fontFamily: "'DM Sans', sans-serif"
-                        }}>💰 Dar Lance</button>
+                        <Btn size="sm" onClick={() => setBidding(l.id)}>Dar Lance</Btn>
                       )}
                     </div>
                   </div>
@@ -804,408 +725,305 @@ function LabDashboard({ onNavigate }) {
           </div>
         )}
 
-        {activeTab === "financeiro" && (
-          <div>
-            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 20 }}>
-              <Card>
-                <div style={{ fontWeight: 700, marginBottom: 16 }}>Receita via CheckApp — Últimos 12 meses</div>
-                <MiniChart data={METRICAS.receitaMensal.map(v => v / 100)} color="#0057FF" height={80} />
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12 }}>
-                  {["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"].map(m => (
-                    <span key={m} style={{ fontSize: 9, color: "#bbb" }}>{m}</span>
-                  ))}
+        {tab === "financeiro" && (
+          <Card style={{ padding: 28 }}>
+            <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 20, color: C.text }}>Receita via CheckApp — 2025</div>
+            <div style={{ display: "flex", alignItems: "flex-end", gap: 4, height: 100, marginBottom: 8 }}>
+              {[42,58,71,89,112,134,158,187,203,241,276,312].map((v, i) => (
+                <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                  <div style={{ width: "100%", borderRadius: "3px 3px 0 0", background: i === 11 ? C.blue : `${C.blue}40`, height: `${(v / 312) * 90}px` }} />
+                  <span style={{ fontSize: 8, color: C.textLight }}>{"JFMAMJJASOND"[i]}</span>
                 </div>
-              </Card>
-              <Card>
-                <div style={{ fontWeight: 700, marginBottom: 16 }}>Este mês</div>
-                <div style={{ fontSize: 36, fontWeight: 900, color: "#0057FF", fontFamily: "'Syne', sans-serif" }}>R$ 4.820</div>
-                <div style={{ color: "#00C896", fontSize: 13, fontWeight: 600, marginTop: 4 }}>↑ +34% vs mês anterior</div>
-                <div style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid #F0F2F8" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 8 }}>
-                    <span style={{ color: "#888" }}>Exames vendidos</span>
-                    <span style={{ fontWeight: 700 }}>23</span>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 8 }}>
-                    <span style={{ color: "#888" }}>Taxa CheckApp (8%)</span>
-                    <span style={{ fontWeight: 700, color: "#888" }}>R$ 386</span>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
-                    <span style={{ color: "#888" }}>Repasse líquido</span>
-                    <span style={{ fontWeight: 700, color: "#00C896" }}>R$ 4.434</span>
-                  </div>
-                </div>
-              </Card>
+              ))}
             </div>
-          </div>
+            <Divider />
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+              {[{ l: "Receita bruta", v: "R$ 4.820" }, { l: "Taxa CheckApp (8%)", v: "R$ 386" }, { l: "Repasse líquido", v: "R$ 4.434", d: true }].map(r => (
+                <div key={r.l}>
+                  <div style={{ fontSize: 12, color: C.textLight, marginBottom: 4 }}>{r.l}</div>
+                  <div style={{ fontWeight: 800, fontSize: 20, color: r.d ? C.green : C.text, fontFamily: "'Syne', sans-serif" }}>{r.v}</div>
+                </div>
+              ))}
+            </div>
+          </Card>
         )}
       </div>
     </div>
   );
 }
 
-// ─── INVESTOR DASHBOARD ───────────────────────────────────────────────────────
-
 function InvestorDashboard({ onNavigate }) {
-  const [activeSection, setActiveSection] = useState("overview");
-
-  const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-  const maxReceita = Math.max(...METRICAS.receitaMensal);
+  const [section, setSection] = useState("overview");
+  const navItems = [
+    { id: "overview", label: "Visão Geral" },
+    { id: "market", label: "Mercado" },
+    { id: "product", label: "Produto" },
+    { id: "model", label: "Modelo" },
+    { id: "roadmap", label: "Roadmap" },
+  ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0A0E1A", fontFamily: "'DM Sans', sans-serif", color: "#fff" }}>
-      {/* Header */}
-      <div style={{
-        background: "rgba(255,255,255,0.04)", borderBottom: "1px solid rgba(255,255,255,0.08)",
-        padding: "16px 40px", display: "flex", justifyContent: "space-between", alignItems: "center",
-        backdropFilter: "blur(10px)", position: "sticky", top: 0, zIndex: 100
-      }}>
-        <Logo size={28} />
-        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-          <Badge color="#4ADE80" bg="rgba(74,222,128,0.15)">🟢 MVP Ao Vivo</Badge>
-          <Badge color="#FFB800" bg="rgba(255,184,0,0.15)">Série A — R$800k</Badge>
-          <button onClick={() => onNavigate("home")} style={{
-            background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)",
-            color: "#fff", padding: "8px 16px", borderRadius: 8, cursor: "pointer", fontSize: 12,
-            fontFamily: "'DM Sans', sans-serif"
-          }}>← Sair</button>
+    <div style={{ background: C.bg, minHeight: "100vh" }}>
+      <div style={{ background: C.surface, borderBottom: `1px solid ${C.border}`, padding: "0 40px" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", gap: 0 }}>
+          {navItems.map(s => (
+            <button key={s.id} onClick={() => setSection(s.id)} style={{ padding: "16px 20px", background: "none", border: "none", borderBottom: `3px solid ${section === s.id ? C.blue : "transparent"}`, color: section === s.id ? C.blue : C.textMid, fontWeight: section === s.id ? 700 : 500, fontSize: 14, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{s.label}</button>
+          ))}
         </div>
       </div>
 
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "40px" }}>
-
-        {/* Section Nav */}
-        <div style={{ display: "flex", gap: 8, marginBottom: 36, borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: 16 }}>
-          {[
-            { id: "overview", label: "📊 Overview" },
-            { id: "market", label: "🌎 Mercado" },
-            { id: "product", label: "⚡ Produto" },
-            { id: "model", label: "💰 Modelo" },
-            { id: "roadmap", label: "🗺️ Roadmap" },
-          ].map(s => (
-            <button key={s.id} onClick={() => setActiveSection(s.id)} style={{
-              background: activeSection === s.id ? "rgba(0,87,255,0.25)" : "transparent",
-              border: `1px solid ${activeSection === s.id ? "rgba(0,87,255,0.6)" : "rgba(255,255,255,0.1)"}`,
-              color: activeSection === s.id ? "#fff" : "rgba(255,255,255,0.5)",
-              padding: "8px 16px", borderRadius: 8, cursor: "pointer", fontSize: 13,
-              fontFamily: "'DM Sans', sans-serif", fontWeight: activeSection === s.id ? 700 : 400,
-              transition: "all 0.15s"
-            }}>{s.label}</button>
-          ))}
-        </div>
-
-        {activeSection === "overview" && (
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "40px" }}>
+        {section === "overview" && (
           <div>
             <div style={{ marginBottom: 32 }}>
-              <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 38, fontWeight: 800, margin: "0 0 8px", letterSpacing: "-0.02em" }}>
-                A primeira <span style={{ color: "#00D4FF" }}>bolsa de exames</span> do mundo
-              </h1>
-              <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 16, margin: 0 }}>Leilão reverso + Yield Management para laboratórios clínicos</p>
+              <div style={{ fontSize: 12, fontWeight: 600, color: C.blue, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>PITCH PARA INVESTIDORES</div>
+              <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 34, fontWeight: 800, margin: "0 0 12px", color: C.text, letterSpacing: "-0.02em" }}>A primeira bolsa de exames laboratoriais do mundo</h1>
+              <div style={{ display: "flex", gap: 8 }}>
+                <Tag color={C.green} bg={C.greenLight}>● MVP Ao Vivo</Tag>
+                <Tag color={C.amber} bg={C.amberLight}>Série A · R$800k</Tag>
+                <Tag color={C.blue} bg={C.blueLight}>2.000 labs cadastrados</Tag>
+              </div>
             </div>
 
-            {/* KPI Grid */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12, marginBottom: 28 }}>
-              {[
-                { v: "2.000", l: "Laboratórios", c: "#00D4FF", i: "🔬" },
-                { v: "1.847", l: "Leilões realizados", c: "#4ADE80", i: "⚡" },
-                { v: "R$482k", l: "Economia gerada", c: "#FFB800", i: "💰" },
-                { v: "R$87", l: "Ticket médio", c: "#FF6B35", i: "🎫" },
-                { v: "73%", l: "Conversão", c: "#9B59B6", i: "📈" },
-                { v: "NPS 68", l: "Satisfação", c: "#E74C3C", i: "❤️" },
-              ].map(k => (
-                <div key={k.l} style={{
-                  background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)",
-                  borderRadius: 14, padding: "16px 12px", textAlign: "center"
-                }}>
-                  <div style={{ fontSize: 22, marginBottom: 6 }}>{k.i}</div>
+              {[{ v: "2.000+", l: "Laboratórios", c: C.blue }, { v: "1.847", l: "Leilões", c: C.teal }, { v: "R$482k", l: "Economia gerada", c: C.green }, { v: "R$87", l: "Ticket médio", c: C.amber }, { v: "73%", l: "Conversão", c: C.blue }, { v: "NPS 68", l: "Satisfação", c: C.green }].map(k => (
+                <Card key={k.l} style={{ padding: "16px 12px", textAlign: "center" }}>
                   <div style={{ fontWeight: 900, fontSize: 20, color: k.c, fontFamily: "'Syne', sans-serif" }}>{k.v}</div>
-                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginTop: 4 }}>{k.l}</div>
-                </div>
+                  <div style={{ fontSize: 11, color: C.textLight, marginTop: 4 }}>{k.l}</div>
+                </Card>
               ))}
             </div>
 
-            {/* Charts Row */}
             <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 20, marginBottom: 20 }}>
-              <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 24 }}>
-                <div style={{ fontWeight: 700, marginBottom: 4 }}>GMV Mensal (R$)</div>
-                <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, marginBottom: 20 }}>Crescimento acumulado 12 meses</div>
-                <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 100 }}>
-                  {METRICAS.receitaMensal.map((v, i) => (
+              <Card style={{ padding: 24 }}>
+                <div style={{ fontWeight: 700, color: C.text, marginBottom: 4 }}>GMV Mensal (R$)</div>
+                <div style={{ fontSize: 12, color: C.textLight, marginBottom: 20 }}>Crescimento acumulado 12 meses</div>
+                <div style={{ display: "flex", alignItems: "flex-end", gap: 4, height: 100 }}>
+                  {[42,58,71,89,112,134,158,187,203,241,276,312].map((v, i) => (
                     <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-                      <div style={{
-                        width: "100%", background: i === 11 ? "linear-gradient(0deg, #0057FF, #00D4FF)" : "rgba(0,87,255,0.4)",
-                        borderRadius: "4px 4px 0 0", height: `${(v / maxReceita) * 90}px`,
-                        transition: "height 0.3s ease"
-                      }} />
-                      <span style={{ fontSize: 8, color: "rgba(255,255,255,0.3)" }}>{months[i]}</span>
+                      <div style={{ width: "100%", borderRadius: "3px 3px 0 0", background: i === 11 ? C.blue : `${C.blue}40`, height: `${(v / 312) * 90}px` }} />
+                      <span style={{ fontSize: 8, color: C.textLight }}>{"JFMAMJJASOND"[i]}</span>
                     </div>
                   ))}
                 </div>
-              </div>
-
-              <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 24 }}>
-                <div style={{ fontWeight: 700, marginBottom: 4 }}>Ocupação dos Labs</div>
-                <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, marginBottom: 20 }}>Antes vs Depois do CheckApp</div>
-                <div style={{ display: "flex", gap: 16, alignItems: "flex-end", height: 100, justifyContent: "center" }}>
-                  {[
-                    { label: "Antes", value: METRICAS.ocupacaoLabsAntes, color: "rgba(255,107,53,0.6)" },
-                    { label: "Depois", value: METRICAS.ocupacaoLabsDepois, color: "rgba(0,87,255,0.8)" },
-                  ].map(b => (
-                    <div key={b.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, flex: 1 }}>
-                      <span style={{ fontSize: 12, fontWeight: 800, color: "#fff" }}>{b.value}%</span>
-                      <div style={{ width: 40, background: b.color, borderRadius: "4px 4px 0 0", height: `${b.value}px` }} />
-                      <span style={{ fontSize: 10, color: "rgba(255,255,255,0.4)" }}>{b.label}</span>
+              </Card>
+              <Card style={{ padding: 24 }}>
+                <div style={{ fontWeight: 700, color: C.text, marginBottom: 20 }}>Ocupação dos Labs</div>
+                <div style={{ display: "flex", gap: 20, justifyContent: "center", alignItems: "flex-end", height: 80 }}>
+                  {[{ l: "Antes", v: 41, c: `${C.red}60` }, { l: "Depois", v: 68, c: C.blue }].map(b => (
+                    <div key={b.l} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                      <span style={{ fontWeight: 800, fontSize: 18, color: C.text }}>{b.v}%</span>
+                      <div style={{ width: 44, borderRadius: "4px 4px 0 0", background: b.c, height: `${b.v}px` }} />
+                      <span style={{ fontSize: 11, color: C.textLight }}>{b.l}</span>
                     </div>
                   ))}
                 </div>
-                <div style={{ textAlign: "center", marginTop: 12, color: "#4ADE80", fontWeight: 700, fontSize: 14 }}>
-                  +{METRICAS.ocupacaoLabsDepois - METRICAS.ocupacaoLabsAntes}pp de melhora
-                </div>
+                <Divider />
+                <div style={{ textAlign: "center", color: C.green, fontWeight: 700, fontSize: 14 }}>+27pp de melhora</div>
+              </Card>
+            </div>
+
+            <Card style={{ overflow: "hidden" }}>
+              <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.border}`, display: "flex", justifyContent: "space-between" }}>
+                <span style={{ fontWeight: 700, color: C.text }}>Leilões Ativos Agora</span>
+                <Tag color={C.red} bg={C.redLight}>● Ao vivo</Tag>
               </div>
-            </div>
-
-            {/* Active auctions table */}
-            <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 24 }}>
-              <div style={{ fontWeight: 700, marginBottom: 16 }}>🔴 Leilões Ativos Agora</div>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-                    {["ID", "Exames", "Cidade", "Lances", "Melhor Lance", "Desconto", "Encerra em"].map(h => (
-                      <th key={h} style={{ textAlign: "left", padding: "8px 12px", fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {LEILOES_ATIVOS.map(l => (
-                    <tr key={l.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                      <td style={{ padding: "10px 12px", fontSize: 12, fontFamily: "monospace", color: "#00D4FF" }}>{l.id}</td>
-                      <td style={{ padding: "10px 12px", fontSize: 12 }}>{l.exames.slice(0, 2).join(", ")}{l.exames.length > 2 ? "..." : ""}</td>
-                      <td style={{ padding: "10px 12px", fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{l.cidade}</td>
-                      <td style={{ padding: "10px 12px", fontSize: 12 }}><Badge color="#4ADE80">{l.lances}</Badge></td>
-                      <td style={{ padding: "10px 12px", fontSize: 13, fontWeight: 700 }}>R$ {l.melhorLance}</td>
-                      <td style={{ padding: "10px 12px" }}><Badge color="#00C896">-{desconto(l.melhorLance, l.precoRef)}%</Badge></td>
-                      <td style={{ padding: "10px 12px", fontSize: 12, color: l.tempoRestante < 300 ? "#FF6B6B" : "#FFB800", fontFamily: "monospace", fontWeight: 700 }}>
-                        {formatTime(l.tempoRestante)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {activeSection === "market" && (
-          <div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 32, fontWeight: 800, margin: "0 0 8px" }}>Mercado Endereçável</h2>
-            <p style={{ color: "rgba(255,255,255,0.5)", margin: "0 0 32px" }}>Brasil + Expansão Global</p>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginBottom: 32 }}>
-              {[
-                { tipo: "TAM", valor: "R$ 180B", desc: "Mercado total de diagnósticos no Brasil + EUA", cor: "#FF6B35" },
-                { tipo: "SAM", valor: "R$ 28B", desc: "Pacientes sem plano + plataformas de prescrição digital", cor: "#FFB800" },
-                { tipo: "SOM", valor: "R$ 420M", desc: "Mercado capturável com operação em SP/RJ em 3 anos", cor: "#4ADE80" },
-              ].map(m => (
-                <div key={m.tipo} style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${m.cor}30`, borderRadius: 16, padding: 24 }}>
-                  <Badge color={m.cor} bg={`${m.cor}20`}>{m.tipo}</Badge>
-                  <div style={{ fontSize: 40, fontWeight: 900, fontFamily: "'Syne', sans-serif", color: m.cor, margin: "12px 0 8px" }}>{m.valor}</div>
-                  <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 13, lineHeight: 1.5 }}>{m.desc}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Competitive Matrix */}
-            <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 24 }}>
-              <div style={{ fontWeight: 700, marginBottom: 16 }}>Análise Competitiva</div>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-                    {["Empresa", "Modelo de Preço", "Leilão Real-Time", "Asset-Light", "OCR IA", "Yield Mgmt"].map(h => (
-                      <th key={h} style={{ textAlign: "left", padding: "10px 12px", fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>{h}</th>
+                  <tr style={{ background: C.bg }}>
+                    {["ID","Exames","Cidade","Lances","Melhor Lance","Desconto","Encerra"].map(h => (
+                      <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, color: C.textLight, fontWeight: 600 }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {LEILOES_MOCK.map(l => (
+                    <tr key={l.id} style={{ borderTop: `1px solid ${C.borderLight}` }}>
+                      <td style={{ padding: "12px 16px", fontFamily: "monospace", color: C.blue, fontSize: 12 }}>{l.id}</td>
+                      <td style={{ padding: "12px 16px" }}>{l.exames.slice(0, 2).join(", ")}{l.exames.length > 2 ? "..." : ""}</td>
+                      <td style={{ padding: "12px 16px", color: C.textMid }}>{l.cidade}</td>
+                      <td style={{ padding: "12px 16px" }}><Tag color={C.green} bg={C.greenLight}>{l.lances}</Tag></td>
+                      <td style={{ padding: "12px 16px", fontWeight: 700 }}>R$ {l.melhorLance}</td>
+                      <td style={{ padding: "12px 16px" }}><Tag color={C.green} bg={C.greenLight}>-{disc(l.melhorLance, l.precoRef)}%</Tag></td>
+                      <td style={{ padding: "12px 16px", fontFamily: "monospace", fontWeight: 700, color: C.amber }}>{fmt(l.timer)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Card>
+          </div>
+        )}
+
+        {section === "market" && (
+          <div>
+            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 8px", color: C.text }}>Mercado Endereçável</h2>
+            <p style={{ color: C.textMid, margin: "0 0 32px" }}>Brasil como prova de conceito · Expansão global planejada</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginBottom: 32 }}>
+              {[{ tipo: "TAM", valor: "R$ 180B", desc: "Mercado total de diagnósticos no Brasil + EUA", cor: C.blue }, { tipo: "SAM", valor: "R$ 28B", desc: "Pacientes sem plano + plataformas de prescrição digital", cor: C.teal }, { tipo: "SOM", valor: "R$ 420M", desc: "Mercado capturável com operação em SP/RJ em 3 anos", cor: C.green }].map(m => (
+                <Card key={m.tipo} style={{ padding: 24, borderTop: `4px solid ${m.cor}` }}>
+                  <Tag color={m.cor} bg={`${m.cor}12`}>{m.tipo}</Tag>
+                  <div style={{ fontSize: 38, fontWeight: 900, fontFamily: "'Syne', sans-serif", color: m.cor, margin: "12px 0 8px" }}>{m.valor}</div>
+                  <div style={{ color: C.textMid, fontSize: 13, lineHeight: 1.6 }}>{m.desc}</div>
+                </Card>
+              ))}
+            </div>
+            <Card style={{ overflow: "hidden" }}>
+              <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.border}` }}><span style={{ fontWeight: 700, color: C.text }}>Análise Competitiva</span></div>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                <thead>
+                  <tr style={{ background: C.bg }}>
+                    {["Empresa","Modelo","Leilão Real-Time","Asset-Light","OCR IA","Yield Mgmt"].map(h => (
+                      <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, color: C.textLight, fontWeight: 600 }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {[
-                    { nome: "CheckApp", modelo: "Leilão Reverso", leilao: true, asset: true, ocr: true, yield: true, destaque: true },
-                    { nome: "Exmed", modelo: "Preço Fixo", leilao: false, asset: true, ocr: false, yield: false },
-                    { nome: "Dr. Consulta", modelo: "Preço Fixo", leilao: false, asset: false, ocr: false, yield: false },
-                    { nome: "Labi / Beep", modelo: "Preço Fixo", leilao: false, asset: true, ocr: false, yield: false },
-                    { nome: "Doutor123", modelo: "Cotação 24h", leilao: false, asset: true, ocr: false, yield: false },
+                    { nome: "CheckApp", modelo: "Leilão Reverso", v: [true,true,true,true], dest: true },
+                    { nome: "Exmed", modelo: "Preço Fixo", v: [false,true,false,false] },
+                    { nome: "Dr. Consulta", modelo: "Preço Fixo", v: [false,false,false,false] },
+                    { nome: "Labi / Beep", modelo: "Preço Fixo", v: [false,true,false,false] },
+                    { nome: "Doutor123", modelo: "Cotação 24h", v: [false,true,false,false] },
                   ].map(c => (
-                    <tr key={c.nome} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: c.destaque ? "rgba(0,87,255,0.1)" : "transparent" }}>
-                      <td style={{ padding: "12px", fontWeight: c.destaque ? 800 : 500, color: c.destaque ? "#00D4FF" : "#fff" }}>{c.nome} {c.destaque ? "✓" : ""}</td>
-                      <td style={{ padding: "12px", color: "rgba(255,255,255,0.6)", fontSize: 12 }}>{c.modelo}</td>
-                      {[c.leilao, c.asset, c.ocr, c.yield].map((val, i) => (
-                        <td key={i} style={{ padding: "12px", textAlign: "center", fontSize: 18 }}>
-                          {val ? <span style={{ color: "#4ADE80" }}>✓</span> : <span style={{ color: "rgba(255,255,255,0.15)" }}>✗</span>}
-                        </td>
+                    <tr key={c.nome} style={{ borderTop: `1px solid ${C.borderLight}`, background: c.dest ? C.blueLight : "transparent" }}>
+                      <td style={{ padding: "12px 16px", fontWeight: c.dest ? 800 : 500, color: c.dest ? C.blue : C.text }}>{c.nome}{c.dest ? " ✓" : ""}</td>
+                      <td style={{ padding: "12px 16px", color: C.textMid }}>{c.modelo}</td>
+                      {c.v.map((val, i) => (
+                        <td key={i} style={{ padding: "12px 16px", textAlign: "center", fontSize: 16 }}>{val ? <span style={{ color: C.green }}>✓</span> : <span style={{ color: C.borderLight }}>✗</span>}</td>
                       ))}
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
+            </Card>
           </div>
         )}
 
-        {activeSection === "product" && (
+        {section === "model" && (
           <div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 32, fontWeight: 800, margin: "0 0 32px" }}>Stack Tecnológico</h2>
+            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 32px", color: C.text }}>Modelo de Negócio</h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20, marginBottom: 28 }}>
               {[
-                { title: "🤖 OCR Inteligente", desc: "Motor de IA converte receitas médicas em requisições de leilão em < 3 segundos. Suporte a fotos, PDFs, e prescrições digitais (Mevo/Memed).", badge: "Gemini API", color: "#00D4FF" },
-                { title: "📉 Yield Engine", desc: "Algoritmo de Step-Down prevê ociosidade dos laboratórios e sugere lances otimizados. Preços caem automaticamente conforme horário ocioso se aproxima.", badge: "Proprietário", color: "#4ADE80" },
-                { title: "⚡ Leilão Real-Time", desc: "WebSockets garantem atualizações em < 100ms. Laboratorios recebem alertas georreferenciados para leilões no raio de 5km.", badge: "WebSocket", color: "#FFB800" },
-                { title: "💊 Base 2.000 Labs", desc: "Rede mapeada com dados de CEP, especialidades e histórico de preços. Algoritmo de match por proximidade, disponibilidade e reputação.", badge: "2.000 registros", color: "#FF6B35" },
-              ].map(f => (
-                <div key={f.title} style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 24 }}>
-                  <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8, fontFamily: "'Syne', sans-serif" }}>{f.title}</div>
-                  <Badge color={f.color} bg={`${f.color}20`}>{f.badge}</Badge>
-                  <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 13, lineHeight: 1.7, marginTop: 12, marginBottom: 0 }}>{f.desc}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Network Effect */}
-            <div style={{ background: "rgba(0,87,255,0.1)", border: "1px solid rgba(0,87,255,0.3)", borderRadius: 16, padding: 24 }}>
-              <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>🔁 Efeito de Rede — O Moat Principal</div>
-              <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
-                <div style={{ flex: 1, color: "rgba(255,255,255,0.6)", fontSize: 13, lineHeight: 1.7 }}>
-                  Quanto mais laboratórios entram → menores os preços → mais pacientes usam → mais leilões → mais receita para os labs → mais labs entram. <br/><br/>
-                  Uma vez estabelecido o ecossistema em uma cidade, o custo de replicação para um concorrente é proibitivo.
-                </div>
-                <div style={{ textAlign: "center", padding: 20, background: "rgba(0,87,255,0.2)", borderRadius: 12, minWidth: 160 }}>
-                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>Break-even estimado</div>
-                  <div style={{ fontWeight: 900, fontSize: 32, color: "#00D4FF", fontFamily: "'Syne', sans-serif" }}>180</div>
-                  <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>labs ativos por cidade</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeSection === "model" && (
-          <div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 32, fontWeight: 800, margin: "0 0 32px" }}>Modelo de Negócio</h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20, marginBottom: 28 }}>
-              {[
-                { n: "B2C", title: "Take-Rate por Transação", desc: "8% sobre cada exame transacionado. Zero custo fixo para o paciente acessar o serviço.", receita: "R$ 7/transação em média", color: "#0057FF" },
-                { n: "B2B-A", title: "SaaS para Convênios", desc: "Planos de saúde não verticalizados usam a plataforma para otimizar custos de exames.", receita: "R$ 2.500/mês por convênio", color: "#00C896" },
-                { n: "B2B-B", title: "SaaS para Labs", desc: "Laboratórios premium pagam para ter ferramentas avançadas de precificação e analytics.", receita: "R$ 390/mês por lab", color: "#FF6B35" },
-                { n: "B2B-C", title: "Saúde Ocupacional", desc: "Empresas gerenciam os exames periódicos de seus colaboradores com relatórios consolidados.", receita: "R$ 8.000/empresa/ano", color: "#9B59B6" },
+                { n: "B2C", title: "Take-Rate por Transação", desc: "8% sobre cada exame transacionado. Zero custo fixo para o paciente.", receita: "~R$ 7 / transação", color: C.blue },
+                { n: "B2B-A", title: "SaaS para Convênios", desc: "Planos de saúde não verticalizados usam a plataforma para reduzir custo de exames.", receita: "R$ 2.500 / mês / convênio", color: C.teal },
+                { n: "B2B-B", title: "SaaS Premium para Labs", desc: "Ferramentas avançadas de precificação, analytics e yield management.", receita: "R$ 390 / mês / lab", color: C.green },
+                { n: "B2B-C", title: "Saúde Ocupacional", desc: "Gestão de exames periódicos de colaboradores com relatórios consolidados.", receita: "R$ 8.000 / empresa / ano", color: C.amber },
               ].map(m => (
-                <div key={m.n} style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${m.color}30`, borderRadius: 16, padding: 24 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-                    <Badge color={m.color} bg={`${m.color}20`}>{m.n}</Badge>
-                    <span style={{ fontWeight: 700, fontSize: 16 }}>{m.title}</span>
+                <Card key={m.n} style={{ padding: 24, borderLeft: `4px solid ${m.color}` }}>
+                  <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
+                    <Tag color={m.color} bg={`${m.color}12`}>{m.n}</Tag>
+                    <span style={{ fontWeight: 700, fontSize: 15, color: C.text }}>{m.title}</span>
                   </div>
-                  <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 13, lineHeight: 1.6, margin: "0 0 12px" }}>{m.desc}</p>
-                  <div style={{ padding: "8px 12px", background: `${m.color}15`, borderRadius: 8, fontSize: 12, fontWeight: 700, color: m.color }}>
-                    💰 {m.receita}
-                  </div>
-                </div>
+                  <p style={{ color: C.textMid, fontSize: 13, lineHeight: 1.6, margin: "0 0 14px" }}>{m.desc}</p>
+                  <div style={{ padding: "8px 12px", background: `${m.color}10`, borderRadius: 8, fontSize: 13, fontWeight: 700, color: m.color }}>💰 {m.receita}</div>
+                </Card>
               ))}
             </div>
-
-            {/* Financial projections */}
-            <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 24 }}>
-              <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 20 }}>Projeções Financeiras (com investimento R$800k)</div>
+            <Card style={{ overflow: "hidden" }}>
+              <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.border}` }}><span style={{ fontWeight: 700, color: C.text }}>Projeções Financeiras — Investimento R$800k</span></div>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
-                  <tr>
-                    {["", "Ano 1", "Ano 2", "Ano 3"].map(h => (
-                      <th key={h} style={{ padding: "10px 16px", textAlign: h === "" ? "left" : "right", fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>{h}</th>
+                  <tr style={{ background: C.bg }}>
+                    {["Métrica","Ano 1","Ano 2","Ano 3"].map(h => (
+                      <th key={h} style={{ padding: "10px 20px", textAlign: h === "Métrica" ? "left" : "right", fontSize: 11, color: C.textLight, fontWeight: 600 }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {[
-                    { metric: "GMV (R$)", values: ["R$ 3.8M", "R$ 18M", "R$ 62M"] },
-                    { metric: "Receita Líquida", values: ["R$ 380k", "R$ 1.8M", "R$ 6.2M"] },
-                    { metric: "Labs Ativos", values: ["450", "1.200", "2.000+"] },
-                    { metric: "Leilões/mês", values: ["2.400", "12.000", "48.000"] },
-                    { metric: "Margem Bruta", values: ["62%", "71%", "78%"] },
-                  ].map((r, i) => (
-                    <tr key={r.metric} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                      <td style={{ padding: "12px 16px", fontSize: 13, color: "rgba(255,255,255,0.7)" }}>{r.metric}</td>
-                      {r.values.map((v, j) => (
-                        <td key={j} style={{ padding: "12px 16px", textAlign: "right", fontSize: 13, fontWeight: j === 2 ? 800 : 500, color: j === 2 ? "#4ADE80" : "#fff" }}>{v}</td>
-                      ))}
+                  {[["GMV","R$ 3.8M","R$ 18M","R$ 62M"],["Receita Líquida","R$ 380k","R$ 1.8M","R$ 6.2M"],["Labs Ativos","450","1.200","2.000+"],["Leilões / mês","2.400","12.000","48.000"],["Margem Bruta","62%","71%","78%"]].map((r, i) => (
+                    <tr key={i} style={{ borderTop: `1px solid ${C.borderLight}` }}>
+                      <td style={{ padding: "12px 20px", fontSize: 13, color: C.textMid }}>{r[0]}</td>
+                      <td style={{ padding: "12px 20px", textAlign: "right", fontSize: 13 }}>{r[1]}</td>
+                      <td style={{ padding: "12px 20px", textAlign: "right", fontSize: 13 }}>{r[2]}</td>
+                      <td style={{ padding: "12px 20px", textAlign: "right", fontSize: 13, fontWeight: 800, color: C.green }}>{r[3]}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
+            </Card>
           </div>
         )}
 
-        {activeSection === "roadmap" && (
+        {section === "roadmap" && (
           <div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 32, fontWeight: 800, margin: "0 0 32px" }}>Roadmap & Uso do Capital</h2>
+            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 32px", color: C.text }}>Roadmap & Uso do Capital</h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginBottom: 32 }}>
               {[
-                { fase: "Fase 1 · Q3 2026", titulo: "MVP Brasil", cor: "#4ADE80", items: ["Lançamento SP + RJ", "450 labs onboardados", "Integração Mevo/Memed", "App iOS + Android", "Payment via Pix/Cartão"], status: "Em andamento" },
-                { fase: "Fase 2 · Q1 2027", titulo: "Escala Nacional", cor: "#00D4FF", items: ["Expansão 10 cidades BR", "API LIS (sistemas de labs)", "B2B planos de saúde", "Yield Engine v2", "1.200 labs ativos"], status: "Planejado" },
-                { fase: "Fase 3 · Q3 2027", titulo: "Expansão Global", cor: "#FFB800", items: ["Soft launch EUA (FL/TX)", "América Latina (MX, CO)", "Cash-pay patients EUA", "Truck Labs integration", "20M pacientes alcançados"], status: "Visão" },
+                { fase: "Q3 2026", titulo: "MVP Brasil", cor: C.green, status: "Em andamento", items: ["Lançamento SP + RJ","450 labs onboardados","Integração Mevo/Memed","App iOS + Android","Pagamento via Pix"] },
+                { fase: "Q1 2027", titulo: "Escala Nacional", cor: C.blue, status: "Planejado", items: ["10 cidades brasileiras","API LIS sistemas de labs","B2B planos de saúde","Yield Engine v2","1.200 labs ativos"] },
+                { fase: "Q3 2027", titulo: "Expansão Global", cor: C.amber, status: "Visão", items: ["Soft launch EUA FL/TX","América Latina MX CO","Cash-pay patients EUA","20M pacientes alcançados"] },
               ].map(f => (
-                <div key={f.fase} style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${f.cor}30`, borderRadius: 16, padding: 24 }}>
-                  <Badge color={f.cor} bg={`${f.cor}20`}>{f.status}</Badge>
-                  <div style={{ fontWeight: 700, fontSize: 15, margin: "12px 0 4px" }}>{f.titulo}</div>
-                  <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, marginBottom: 16 }}>{f.fase}</div>
+                <Card key={f.fase} style={{ padding: 24, borderTop: `4px solid ${f.cor}` }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+                    <Tag color={f.cor} bg={`${f.cor}12`}>{f.status}</Tag>
+                    <span style={{ fontSize: 12, color: C.textLight }}>{f.fase}</span>
+                  </div>
+                  <div style={{ fontWeight: 800, fontSize: 17, color: C.text, marginBottom: 16, fontFamily: "'Syne', sans-serif" }}>{f.titulo}</div>
                   {f.items.map(item => (
                     <div key={item} style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 8 }}>
-                      <div style={{ width: 6, height: 6, borderRadius: "50%", background: f.cor, flexShrink: 0 }} />
-                      <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{item}</span>
+                      <div style={{ width: 5, height: 5, borderRadius: "50%", background: f.cor, flexShrink: 0 }} />
+                      <span style={{ fontSize: 13, color: C.textMid }}>{item}</span>
                     </div>
                   ))}
-                </div>
+                </Card>
               ))}
             </div>
-
-            {/* Capital Allocation */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-              <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 24 }}>
-                <div style={{ fontWeight: 700, marginBottom: 16 }}>💰 Uso do Capital — R$800k</div>
-                {[
-                  { item: "Tecnologia & Produto", pct: 45, cor: "#0057FF" },
-                  { item: "Vendas B2B & Growth", pct: 30, cor: "#00C896" },
-                  { item: "Operações & Jurídico", pct: 15, cor: "#FFB800" },
-                  { item: "Reserva", pct: 10, cor: "#888" },
-                ].map(u => (
+              <Card style={{ padding: 24 }}>
+                <div style={{ fontWeight: 700, color: C.text, marginBottom: 16 }}>Alocação do Capital — R$800k</div>
+                {[{ item: "Tecnologia & Produto", p: 45, c: C.blue }, { item: "Vendas B2B & Growth", p: 30, c: C.teal }, { item: "Operações & Jurídico", p: 15, c: C.amber }, { item: "Reserva Estratégica", p: 10, c: C.textLight }].map(u => (
                   <div key={u.item} style={{ marginBottom: 14 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 5 }}>
-                      <span style={{ color: "rgba(255,255,255,0.7)" }}>{u.item}</span>
-                      <span style={{ fontWeight: 700, color: u.cor }}>{u.pct}%</span>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 6 }}>
+                      <span style={{ color: C.textMid }}>{u.item}</span>
+                      <span style={{ fontWeight: 700, color: u.c }}>{u.p}%</span>
                     </div>
-                    <div style={{ height: 6, background: "rgba(255,255,255,0.08)", borderRadius: 3 }}>
-                      <div style={{ height: "100%", width: `${u.pct}%`, background: u.cor, borderRadius: 3 }} />
+                    <div style={{ height: 6, background: C.borderLight, borderRadius: 3 }}>
+                      <div style={{ height: "100%", width: `${u.p}%`, background: u.c, borderRadius: 3 }} />
                     </div>
                   </div>
                 ))}
-              </div>
-
-              <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 24 }}>
-                <div style={{ fontWeight: 700, marginBottom: 16 }}>📬 Contato para Investidores</div>
-                <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 13, lineHeight: 1.8, marginBottom: 20 }}>
-                  Buscamos R$800k para 18 meses de operação focados em:<br/>
-                  • Aquisição dos primeiros 450 labs ativos<br/>
-                  • Escala para 2 cidades (SP + RJ)<br/>
-                  • Break-even operacional projetado: Mês 14
-                </div>
+              </Card>
+              <Card style={{ padding: 24 }}>
+                <div style={{ fontWeight: 700, color: C.text, marginBottom: 12 }}>Contato para Investidores</div>
+                <p style={{ color: C.textMid, fontSize: 13, lineHeight: 1.8, marginBottom: 20 }}>
+                  Buscamos R$800k para 18 meses:<br />
+                  • 450 labs ativos em SP e RJ<br />
+                  • Break-even projetado: Mês 14<br />
+                  • Exit via M&A ou Série B em 36 meses
+                </p>
                 <div style={{ display: "flex", gap: 10 }}>
-                  <button style={{
-                    flex: 1, background: "linear-gradient(135deg, #0057FF, #00D4FF)",
-                    border: "none", color: "#fff", padding: "12px", borderRadius: 10, cursor: "pointer",
-                    fontWeight: 700, fontFamily: "'DM Sans', sans-serif", fontSize: 13
-                  }}>📧 Solicitar Pitch Deck</button>
-                  <button onClick={() => onNavigate("patient")} style={{
-                    flex: 1, background: "rgba(255,255,255,0.08)",
-                    border: "1px solid rgba(255,255,255,0.15)", color: "#fff", padding: "12px", borderRadius: 10,
-                    cursor: "pointer", fontWeight: 600, fontFamily: "'DM Sans', sans-serif", fontSize: 13
-                  }}>🚀 Ver Demo Ao Vivo</button>
+                  <Btn style={{ flex: 1 }}>📧 Solicitar Pitch Deck</Btn>
+                  <Btn variant="secondary" onClick={() => onNavigate("patient")} style={{ flex: 1 }}>🚀 Ver Demo</Btn>
                 </div>
-              </div>
+              </Card>
             </div>
+          </div>
+        )}
+
+        {section === "product" && (
+          <div>
+            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 32px", color: C.text }}>Stack Tecnológico</h2>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20, marginBottom: 28 }}>
+              {[
+                { icon: "🤖", title: "OCR com IA (Anthropic)", desc: "API Claude Vision lê fotos e PDFs de pedidos médicos, extrai exames em menos de 3 segundos com 95% de precisão.", badge: "Claude API · Ativo", color: C.blue },
+                { icon: "📍", title: "Geolocalização por CEP", desc: "Integração com ViaCEP para encontrar laboratórios credenciados no raio de 5km em tempo real.", badge: "ViaCEP · Ativo", color: C.teal },
+                { icon: "📉", title: "Yield Engine", desc: "Algoritmo proprietário prevê ociosidade dos laboratórios e otimiza preços em função do horário e da demanda.", badge: "Proprietário", color: C.green },
+                { icon: "⚡", title: "Leilão WebSocket", desc: "Atualizações em menos de 100ms. Labs recebem notificações push para leilões no seu raio de ação.", badge: "WebSocket + Push", color: C.amber },
+              ].map(f => (
+                <Card key={f.title} style={{ padding: 24 }}>
+                  <div style={{ fontSize: 32, marginBottom: 12 }}>{f.icon}</div>
+                  <Tag color={f.color} bg={`${f.color}12`}>{f.badge}</Tag>
+                  <h3 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 17, margin: "10px 0 8px", color: C.text }}>{f.title}</h3>
+                  <p style={{ color: C.textMid, fontSize: 13, lineHeight: 1.7, margin: 0 }}>{f.desc}</p>
+                </Card>
+              ))}
+            </div>
+            <Card style={{ padding: 24, background: C.blueLight, border: `1px solid ${C.blue}30` }}>
+              <div style={{ fontWeight: 700, fontSize: 16, color: C.text, marginBottom: 10 }}>🔁 Efeito de Rede — O Moat Principal</div>
+              <p style={{ color: C.textMid, fontSize: 14, lineHeight: 1.7, margin: 0 }}>
+                Mais laboratórios → menores preços → mais pacientes → mais leilões → mais receita para labs → mais labs entram. Uma vez estabelecido o ecossistema em uma cidade, o custo de replicação para um concorrente é proibitivo. Break-even de rede estimado: <strong>180 labs ativos por cidade</strong>.
+              </p>
+            </Card>
           </div>
         )}
       </div>
@@ -1213,21 +1031,19 @@ function InvestorDashboard({ onNavigate }) {
   );
 }
 
-// ─── MAIN APP ─────────────────────────────────────────────────────────────────
-
 export default function App() {
   const [page, setPage] = useState("home");
-
   return (
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=DM+Sans:wght@400;500;600;700;800&display=swap');
         * { box-sizing: border-box; }
-        body { margin: 0; padding: 0; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-6px); } }
+        body { margin: 0; padding: 0; font-family: 'DM Sans', sans-serif; background: #F8FAFB; }
+        input:focus { border-color: #005EB8 !important; box-shadow: 0 0 0 3px rgba(0,94,184,0.1); }
+        button:hover { opacity: 0.9; }
       `}</style>
-      {page === "home" && <LandingPage onNavigate={setPage} />}
+      <Header page={page} onNavigate={setPage} />
+      {page === "home" && <HomePage onNavigate={setPage} />}
       {page === "patient" && <PatientFlow onNavigate={setPage} />}
       {page === "lab" && <LabDashboard onNavigate={setPage} />}
       {page === "investor" && <InvestorDashboard onNavigate={setPage} />}
