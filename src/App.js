@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 // ─── MOCK DATA ────────────────────────────────────────────────────────────────
 const LABS_DB = [
@@ -319,7 +319,7 @@ function PatientFlow({ onNavigate }) {
   const [selectedExames, setSelectedExames] = useState([]);
   const [ocrDone, setOcrDone] = useState(false);
   const [scanning, setScanning] = useState(false);
-  const [auctionLive, setAuctionLive] = useState(false);
+  const [, setAuctionLive] = useState(false);
   const [selectedWinner, setSelectedWinner] = useState(null);
   const [lances, setLances] = useState([]);
   const [timer, setTimer] = useState(180);
