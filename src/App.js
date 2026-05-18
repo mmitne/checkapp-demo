@@ -113,7 +113,7 @@ function LabInitial({ nome, color, size = 44 }) {
       width: size, height: size, borderRadius: 10, flexShrink: 0,
       background: `${color}18`, border: `1px solid ${color}30`,
       display: "flex", alignItems: "center", justifyContent: "center",
-      fontSize: size * 0.4, fontWeight: 800, color, fontFamily: "'Syne', sans-serif"
+      fontSize: size * 0.4, fontWeight: 800, color, fontFamily: "'Inter', sans-serif"
     }}>{nome[0]}</div>
   );
 }
@@ -139,7 +139,7 @@ function Header({ page, onNavigate }) {
       <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 0 : 32 }}>
         <div onClick={() => onNavigate("home")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 32, height: 32, borderRadius: 8, background: C.blue, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, color: "#fff", fontWeight: 900 }}>✓</div>
-          <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 18, color: C.text, letterSpacing: "-0.02em" }}>Check<span style={{ color: C.blue }}>App</span></span>
+          <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 18, color: C.text, letterSpacing: "-0.02em" }}>Check<span style={{ color: C.blue }}>App</span></span>
         </div>
         {!isMobile && (
           <nav style={{ display: "flex", gap: 4 }}>
@@ -203,7 +203,7 @@ function HomePage({ onNavigate }) {
               <div style={{ marginBottom: 20 }}>
                 <Tag color="#00BCD4" bg="rgba(0,188,212,0.15)">Leilão Reverso · Medicina Diagnóstica</Tag>
               </div>
-              <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: isMobile ? 30 : 48, fontWeight: 800, color: "#fff", lineHeight: 1.15, letterSpacing: "-0.02em", margin: "0 0 16px" }}>
+              <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: isMobile ? 30 : 48, fontWeight: 800, color: "#fff", lineHeight: 1.15, letterSpacing: "-0.02em", margin: "0 0 16px" }}>
                 Exames laboratoriais com <span style={{ color: "#64B5F6" }}>até 60% de economia</span>
               </h1>
               <p style={{ color: "rgba(255,255,255,0.65)", fontSize: isMobile ? 15 : 17, lineHeight: 1.7, margin: "0 0 28px" }}>
@@ -220,7 +220,7 @@ function HomePage({ onNavigate }) {
               <div style={{ display: "flex", gap: isMobile ? 20 : 40, marginTop: 32, flexWrap: "wrap" }}>
                 {[{ v: "2.000+", l: "Laboratórios credenciados" }, { v: "R$482k", l: "Economia gerada" }, { v: "73%", l: "Taxa de conversão" }].map(s => (
                   <div key={s.l}>
-                    <div style={{ color: "#fff", fontWeight: 800, fontSize: 22, fontFamily: "'Syne', sans-serif" }}>{s.v}</div>
+                    <div style={{ color: "#fff", fontWeight: 800, fontSize: 22, fontFamily: "'Inter', sans-serif" }}>{s.v}</div>
                     <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, marginTop: 2 }}>{s.l}</div>
                   </div>
                 ))}
@@ -267,7 +267,7 @@ function HomePage({ onNavigate }) {
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "48px 20px" : "80px 40px" }}>
         <div style={{ textAlign: "center", marginBottom: 56 }}>
           <div style={{ fontSize: 12, fontWeight: 600, color: C.blue, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>PROCESSO</div>
-          <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: isMobile ? 24 : 34, fontWeight: 800, margin: 0, color: C.text, letterSpacing: "-0.02em" }}>Do pedido médico ao resultado em 3 passos</h2>
+          <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: isMobile ? 24 : 34, fontWeight: 800, margin: 0, color: C.text, letterSpacing: "-0.02em" }}>Do pedido médico ao resultado em 3 passos</h2>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 16 }}>
           {[
@@ -278,7 +278,7 @@ function HomePage({ onNavigate }) {
             <Card key={s.n} style={{ padding: 28 }}>
               <div style={{ width: 48, height: 48, borderRadius: 12, background: `${s.color}12`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, marginBottom: 16 }}>{s.icon}</div>
               <Tag color={s.color} bg={`${s.color}12`}>Passo {s.n}</Tag>
-              <h3 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 18, margin: "10px 0 8px", color: C.text }}>{s.title}</h3>
+              <h3 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 18, margin: "10px 0 8px", color: C.text }}>{s.title}</h3>
               <p style={{ color: C.textMid, fontSize: 14, lineHeight: 1.7, margin: 0 }}>{s.desc}</p>
             </Card>
           ))}
@@ -288,13 +288,13 @@ function HomePage({ onNavigate }) {
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "0 20px 48px" : "0 40px 80px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20 }}>
         <Card onClick={() => onNavigate("patient")} style={{ padding: 36, background: C.blue, border: "none", cursor: "pointer" }}>
           <div style={{ fontSize: 36, marginBottom: 16 }}>👤</div>
-          <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800, margin: "0 0 10px", color: "#fff" }}>Sou Paciente</h3>
+          <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 22, fontWeight: 800, margin: "0 0 10px", color: "#fff" }}>Sou Paciente</h3>
           <p style={{ color: "rgba(255,255,255,0.75)", fontSize: 14, lineHeight: 1.6, margin: "0 0 20px" }}>Envie seu pedido médico e receba propostas de laboratórios credenciados próximos a você.</p>
           <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>Começar agora →</span>
         </Card>
         <Card onClick={() => onNavigate("lab")} style={{ padding: 36, background: "linear-gradient(135deg, #001F4D, #003A8C)", border: "none", cursor: "pointer" }}>
           <div style={{ fontSize: 36, marginBottom: 16 }}>🔬</div>
-          <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800, margin: "0 0 10px", color: "#fff" }}>Sou Laboratório</h3>
+          <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 22, fontWeight: 800, margin: "0 0 10px", color: "#fff" }}>Sou Laboratório</h3>
           <p style={{ color: "rgba(255,255,255,0.65)", fontSize: 14, lineHeight: 1.6, margin: "0 0 20px" }}>Preencha sua capacidade ociosa com novos pacientes. Zero custo fixo.</p>
           <span style={{ color: "#64B5F6", fontWeight: 700, fontSize: 14 }}>Cadastrar laboratório →</span>
         </Card>
@@ -417,7 +417,7 @@ function PatientFlow({ onNavigate }) {
 
         {step === 1 && (
           <div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 26, fontWeight: 800, margin: "0 0 6px", color: C.text }}>Qual é a sua localização?</h2>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, fontWeight: 800, margin: "0 0 6px", color: C.text }}>Qual é a sua localização?</h2>
             <p style={{ color: C.textMid, margin: "0 0 28px" }}>Usamos seu CEP para encontrar laboratórios parceiros próximos.</p>
             <Card style={{ padding: 28, marginBottom: 20 }}>
               <label style={{ fontSize: 13, fontWeight: 600, color: C.text, display: "block", marginBottom: 8 }}>CEP</label>
@@ -471,7 +471,7 @@ function PatientFlow({ onNavigate }) {
 
         {step === 2 && (
           <div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 26, fontWeight: 800, margin: "0 0 6px", color: C.text }}>Quais exames você precisa?</h2>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, fontWeight: 800, margin: "0 0 6px", color: C.text }}>Quais exames você precisa?</h2>
             <p style={{ color: C.textMid, margin: "0 0 24px" }}>Envie seu pedido médico ou adicione os exames manualmente.</p>
 
             <Card style={{ marginBottom: 20, overflow: "hidden" }}>
@@ -576,7 +576,7 @@ function PatientFlow({ onNavigate }) {
                   <div style={{ width: 8, height: 8, borderRadius: "50%", background: C.red }} />
                   <span style={{ fontWeight: 700, fontSize: 13, color: C.red }}>Leilão em andamento</span>
                 </div>
-                <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 24, fontWeight: 800, margin: 0, color: C.text }}>Recebendo propostas</h2>
+                <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, fontWeight: 800, margin: 0, color: C.text }}>Recebendo propostas</h2>
                 <div style={{ fontSize: 13, color: C.textLight, marginTop: 4 }}>{selectedExames.slice(0, 2).join(" · ")}{selectedExames.length > 2 ? ` +${selectedExames.length - 2}` : ""}</div>
               </div>
               <div style={{ textAlign: "right" }}>
@@ -611,7 +611,7 @@ function PatientFlow({ onNavigate }) {
                     </div>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <div style={{ fontWeight: 900, fontSize: 26, color: C.blue, fontFamily: "'Syne', sans-serif" }}>R$ {l.lance}</div>
+                    <div style={{ fontWeight: 900, fontSize: 26, color: C.blue, fontFamily: "'Inter', sans-serif" }}>R$ {l.lance}</div>
                     <Tag color={C.green} bg={C.greenLight}>-{disc(l.lance, precoRef)}% desc.</Tag>
                     {idx === 0 && <div style={{ marginTop: 4 }}><Tag color={C.amber} bg={C.amberLight}>🏆 Melhor oferta</Tag></div>}
                   </div>
@@ -640,7 +640,7 @@ function PatientFlow({ onNavigate }) {
         {step === 4 && (
           <div style={{ textAlign: "center" }}>
             <div style={{ width: 80, height: 80, borderRadius: "50%", background: C.greenLight, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, margin: "0 auto 24px" }}>✅</div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 10px", color: C.text }}>Exame Confirmado!</h2>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 10px", color: C.text }}>Exame Confirmado!</h2>
             <p style={{ color: C.textMid, marginBottom: 32 }}>Agendamento realizado com sucesso.</p>
             <Card style={{ padding: 28, marginBottom: 20, textAlign: "left" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
@@ -649,7 +649,7 @@ function PatientFlow({ onNavigate }) {
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
                 <span style={{ fontWeight: 700, fontSize: 16, color: C.text }}>Você vai pagar</span>
-                <span style={{ fontWeight: 900, fontSize: 24, color: C.blue, fontFamily: "'Syne', sans-serif" }}>R$ {lances[selectedLance]?.lance || Math.round(precoRef * 0.62)}</span>
+                <span style={{ fontWeight: 900, fontSize: 24, color: C.blue, fontFamily: "'Inter', sans-serif" }}>R$ {lances[selectedLance]?.lance || Math.round(precoRef * 0.62)}</span>
               </div>
               <Divider />
               <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -699,7 +699,7 @@ function LabDashboard({ onNavigate }) {
 
       <div style={{ flex: 1, padding: 32 }}>
         <div style={{ marginBottom: 28 }}>
-          <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800, margin: "0 0 4px", color: C.text }}>{lab.nome}</h1>
+          <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 22, fontWeight: 800, margin: "0 0 4px", color: C.text }}>{lab.nome}</h1>
           <div style={{ color: C.textLight, fontSize: 13 }}>{lab.bairro} · Ocupação: {pct(lab.ocupacao, lab.capacidade)}%</div>
         </div>
 
@@ -712,7 +712,7 @@ function LabDashboard({ onNavigate }) {
           ].map(s => (
             <Card key={s.label} style={{ padding: 20 }}>
               <div style={{ fontSize: 22, marginBottom: 8 }}>{s.icon}</div>
-              <div style={{ fontSize: 24, fontWeight: 900, color: s.color, fontFamily: "'Syne', sans-serif" }}>{s.value}</div>
+              <div style={{ fontSize: 24, fontWeight: 900, color: s.color, fontFamily: "'Inter', sans-serif" }}>{s.value}</div>
               <div style={{ fontWeight: 600, fontSize: 13, color: C.text, marginTop: 2 }}>{s.label}</div>
               <div style={{ color: C.textLight, fontSize: 11, marginTop: 2 }}>{s.sub}</div>
             </Card>
@@ -769,7 +769,7 @@ function LabDashboard({ onNavigate }) {
               {[{ l: "Receita bruta", v: "R$ 4.820" }, { l: "Taxa CheckApp (8%)", v: "R$ 386" }, { l: "Repasse líquido", v: "R$ 4.434", d: true }].map(r => (
                 <div key={r.l}>
                   <div style={{ fontSize: 12, color: C.textLight, marginBottom: 4 }}>{r.l}</div>
-                  <div style={{ fontWeight: 800, fontSize: 20, color: r.d ? C.green : C.text, fontFamily: "'Syne', sans-serif" }}>{r.v}</div>
+                  <div style={{ fontWeight: 800, fontSize: 20, color: r.d ? C.green : C.text, fontFamily: "'Inter', sans-serif" }}>{r.v}</div>
                 </div>
               ))}
             </div>
@@ -777,6 +777,74 @@ function LabDashboard({ onNavigate }) {
         )}
       </div>
     </div>
+  );
+}
+
+function InvestorContactCard({ onNavigate }) {
+  const [fields, setFields] = useState({
+    captacao: "R$1,2M Seed",
+    prazo: "18 meses",
+    meta1: "120 labs ativos em SP (mês 6)",
+    meta2: "480 labs SP + RJ (mês 12)",
+    meta3: "Break-even operacional: Mês 18",
+    meta4: "Exit via M&A ou Série A em 36 meses",
+  });
+  const [editing, setEditing] = useState(false);
+
+  const inputStyle = {
+    width: "100%", padding: "6px 10px", borderRadius: 6, fontSize: 13,
+    border: `1px solid ${editing ? C.blue : C.borderLight}`,
+    fontFamily: "'DM Sans', sans-serif", color: C.text,
+    background: editing ? "#fff" : "transparent",
+    outline: "none", marginBottom: 6, boxSizing: "border-box",
+    cursor: editing ? "text" : "default",
+    pointerEvents: editing ? "auto" : "none",
+  };
+
+  return (
+    <Card style={{ padding: 24 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, color: C.text, fontSize: 14 }}>Contato para Investidores</div>
+        <button onClick={() => setEditing(!editing)} style={{
+          background: editing ? C.greenLight : C.blueLight,
+          color: editing ? C.green : C.blue,
+          border: "none", borderRadius: 6, padding: "4px 10px",
+          fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif"
+        }}>{editing ? "✓ Salvar" : "✏️ Editar"}</button>
+      </div>
+
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ fontSize: 11, color: C.textLight, marginBottom: 4, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em" }}>Captação · Prazo</div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <input value={fields.captacao} onChange={e => setFields(f => ({...f, captacao: e.target.value}))}
+            style={{ ...inputStyle, flex: 1, fontWeight: 700, fontSize: 15, color: C.blue }} readOnly={!editing} />
+          <input value={fields.prazo} onChange={e => setFields(f => ({...f, prazo: e.target.value}))}
+            style={{ ...inputStyle, width: 100, flex: "none" }} readOnly={!editing} />
+        </div>
+      </div>
+
+      <div style={{ marginBottom: 16 }}>
+        <div style={{ fontSize: 11, color: C.textLight, marginBottom: 6, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em" }}>Marcos do investimento</div>
+        {["meta1","meta2","meta3","meta4"].map((k, i) => (
+          <div key={k} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ color: C.blue, fontSize: 12, flexShrink: 0 }}>•</span>
+            <input value={fields[k]} onChange={e => setFields(f => ({...f, [k]: e.target.value}))}
+              style={{ ...inputStyle, marginBottom: i < 3 ? 4 : 0 }} readOnly={!editing} />
+          </div>
+        ))}
+      </div>
+
+      {editing && (
+        <div style={{ padding: "8px 12px", background: C.amberLight, borderRadius: 8, fontSize: 12, color: C.amber, marginBottom: 12 }}>
+          ✏️ Modo de edição ativo — personalize para cada apresentação
+        </div>
+      )}
+
+      <div style={{ display: "flex", gap: 10 }}>
+        <Btn style={{ flex: 1 }}>📧 Solicitar Pitch Deck</Btn>
+        <Btn variant="secondary" onClick={() => onNavigate("patient")} style={{ flex: 1 }}>🚀 Ver Demo</Btn>
+      </div>
+    </Card>
   );
 }
 
@@ -806,7 +874,7 @@ function InvestorDashboard({ onNavigate }) {
           <div>
             <div style={{ marginBottom: 32 }}>
               <div style={{ fontSize: 12, fontWeight: 600, color: C.blue, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>PITCH PARA INVESTIDORES</div>
-              <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 34, fontWeight: 800, margin: "0 0 12px", color: C.text, letterSpacing: "-0.02em" }}>A primeira bolsa de exames laboratoriais do mundo</h1>
+              <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 34, fontWeight: 800, margin: "0 0 12px", color: C.text, letterSpacing: "-0.02em" }}>A primeira bolsa de exames laboratoriais do mundo</h1>
               <div style={{ display: "flex", gap: 8 }}>
                 <Tag color={C.green} bg={C.greenLight}>● MVP Ao Vivo</Tag>
                 <Tag color={C.amber} bg={C.amberLight}>Seed · R$1.2M</Tag>
@@ -817,7 +885,7 @@ function InvestorDashboard({ onNavigate }) {
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(3, 1fr)" : "repeat(6, 1fr)", gap: 12, marginBottom: 28 }}>
               {[{ v: "18.000+", l: "Labs no Brasil", c: C.blue }, { v: "2,53B", l: "Exames/ano no BR", c: C.teal }, { v: "75%", l: "Sem plano saúde", c: C.green }, { v: "R$45B", l: "Mercado privado", c: C.amber }, { v: "10%", l: "Crescimento a.a.", c: C.blue }, { v: "R$40B", l: "Receita setor 2024", c: C.green }].map(k => (
                 <Card key={k.l} style={{ padding: "16px 12px", textAlign: "center" }}>
-                  <div style={{ fontWeight: 900, fontSize: 20, color: k.c, fontFamily: "'Syne', sans-serif" }}>{k.v}</div>
+                  <div style={{ fontWeight: 900, fontSize: 20, color: k.c, fontFamily: "'Inter', sans-serif" }}>{k.v}</div>
                   <div style={{ fontSize: 11, color: C.textLight, marginTop: 4 }}>{k.l}</div>
                 </Card>
               ))}
@@ -885,13 +953,13 @@ function InvestorDashboard({ onNavigate }) {
 
         {section === "market" && (
           <div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 8px", color: C.text }}>Mercado Endereçável</h2>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 8px", color: C.text }}>Mercado Endereçável</h2>
             <p style={{ color: C.textMid, margin: "0 0 32px" }}>Brasil como prova de conceito · Expansão global planejada</p>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 16, marginBottom: 28 }}>
               {[{ tipo: "TAM", valor: "R$ 45B", desc: "Mercado privado de medicina diagnóstica no Brasil. Setor cresceu 10% em 2024, com R$34B de receita privada — Painel ABRAMED 2024.", cor: C.blue }, { tipo: "SAM", valor: "R$ 12B", desc: "Exames pagos diretamente pelo paciente (cash-pay). 75% dos brasileiros sem plano privado equivale a ~152M de pessoas — ANS 2024.", cor: C.teal }, { tipo: "SOM", valor: "R$ 180M", desc: "Capturável em 3 anos operando SP, RJ e BH. Representa 1,5% do SAM — meta conservadora e defensável a investidores.", cor: C.green }].map(m => (
                 <Card key={m.tipo} style={{ padding: 24, borderTop: `4px solid ${m.cor}` }}>
                   <Tag color={m.cor} bg={`${m.cor}12`}>{m.tipo}</Tag>
-                  <div style={{ fontSize: 38, fontWeight: 900, fontFamily: "'Syne', sans-serif", color: m.cor, margin: "12px 0 8px" }}>{m.valor}</div>
+                  <div style={{ fontSize: 38, fontWeight: 900, fontFamily: "'Inter', sans-serif", color: m.cor, margin: "12px 0 8px" }}>{m.valor}</div>
                   <div style={{ color: C.textMid, fontSize: 13, lineHeight: 1.6 }}>{m.desc}</div>
                 </Card>
               ))}
@@ -930,7 +998,7 @@ function InvestorDashboard({ onNavigate }) {
 
         {section === "model" && (
           <div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 32px", color: C.text }}>Modelo de Negócio</h2>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 32px", color: C.text }}>Modelo de Negócio</h2>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)", gap: 16, marginBottom: 24 }}>
               {[
                 { n: "B2C", title: "Take-Rate por Transação", desc: "10% sobre cada transação. Ticket médio de R$95 → R$9,50 por leilão. Fonte: preços praticados por Exmed e Labi.", receita: "~R$ 9,50 / transação", color: C.blue },
@@ -975,7 +1043,7 @@ function InvestorDashboard({ onNavigate }) {
 
         {section === "roadmap" && (
           <div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 32px", color: C.text }}>Roadmap & Uso do Capital</h2>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 32px", color: C.text }}>Roadmap & Uso do Capital</h2>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 16, marginBottom: 28 }}>
               {[
                 { fase: "Q4 2026", titulo: "MVP Validado", cor: C.green, status: "Em andamento", items: ["120 labs onboardados SP","Leilão funcional ao vivo","OCR com Claude AI ativo","CEP + geolocalização","Pix integrado"] },
@@ -987,7 +1055,7 @@ function InvestorDashboard({ onNavigate }) {
                     <Tag color={f.cor} bg={`${f.cor}12`}>{f.status}</Tag>
                     <span style={{ fontSize: 12, color: C.textLight }}>{f.fase}</span>
                   </div>
-                  <div style={{ fontWeight: 800, fontSize: 17, color: C.text, marginBottom: 16, fontFamily: "'Syne', sans-serif" }}>{f.titulo}</div>
+                  <div style={{ fontWeight: 800, fontSize: 17, color: C.text, marginBottom: 16, fontFamily: "'Inter', sans-serif" }}>{f.titulo}</div>
                   {f.items.map(item => (
                     <div key={item} style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 8 }}>
                       <div style={{ width: 5, height: 5, borderRadius: "50%", background: f.cor, flexShrink: 0 }} />
@@ -1012,27 +1080,14 @@ function InvestorDashboard({ onNavigate }) {
                   </div>
                 ))}
               </Card>
-              <Card style={{ padding: 24 }}>
-                <div style={{ fontWeight: 700, color: C.text, marginBottom: 12 }}>Contato para Investidores</div>
-                <p style={{ color: C.textMid, fontSize: 13, lineHeight: 1.8, marginBottom: 20 }}>
-                  Buscamos R$1,2M Seed para 18 meses:<br />
-                  • 120 labs ativos em SP (mês 6)<br />
-                  • 480 labs SP + RJ (mês 12)<br />
-                  • Break-even operacional: Mês 18<br />
-                  • Exit via M&A ou Série A em 36 meses
-                </p>
-                <div style={{ display: "flex", gap: 10 }}>
-                  <Btn style={{ flex: 1 }}>📧 Solicitar Pitch Deck</Btn>
-                  <Btn variant="secondary" onClick={() => onNavigate("patient")} style={{ flex: 1 }}>🚀 Ver Demo</Btn>
-                </div>
-              </Card>
+              <InvestorContactCard onNavigate={onNavigate} />
             </div>
           </div>
         )}
 
         {section === "product" && (
           <div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 32px", color: C.text }}>Stack Tecnológico</h2>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 32px", color: C.text }}>Stack Tecnológico</h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20, marginBottom: 28 }}>
               {[
                 { icon: "🤖", title: "OCR com IA (Anthropic)", desc: "API Claude Vision lê fotos e PDFs de pedidos médicos, extrai exames em menos de 3 segundos com 95% de precisão.", badge: "Claude API · Ativo", color: C.blue },
@@ -1043,7 +1098,7 @@ function InvestorDashboard({ onNavigate }) {
                 <Card key={f.title} style={{ padding: 24 }}>
                   <div style={{ fontSize: 32, marginBottom: 12 }}>{f.icon}</div>
                   <Tag color={f.color} bg={`${f.color}12`}>{f.badge}</Tag>
-                  <h3 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 17, margin: "10px 0 8px", color: C.text }}>{f.title}</h3>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 17, margin: "10px 0 8px", color: C.text }}>{f.title}</h3>
                   <p style={{ color: C.textMid, fontSize: 13, lineHeight: 1.7, margin: 0 }}>{f.desc}</p>
                 </Card>
               ))}
@@ -1066,7 +1121,7 @@ export default function App() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=DM+Sans:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&family=DM+Sans:wght@400;500;600;700;800&display=swap');
         * { box-sizing: border-box; }
         body { margin: 0; padding: 0; font-family: 'DM Sans', sans-serif; background: #F8FAFB; }
         input:focus { border-color: #005EB8 !important; box-shadow: 0 0 0 3px rgba(0,94,184,0.1); }
