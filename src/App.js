@@ -772,13 +772,13 @@ function InvestorDashboard({ onNavigate }) {
               <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 34, fontWeight: 800, margin: "0 0 12px", color: C.text, letterSpacing: "-0.02em" }}>A primeira bolsa de exames laboratoriais do mundo</h1>
               <div style={{ display: "flex", gap: 8 }}>
                 <Tag color={C.green} bg={C.greenLight}>● MVP Ao Vivo</Tag>
-                <Tag color={C.amber} bg={C.amberLight}>Série A · R$800k</Tag>
-                <Tag color={C.blue} bg={C.blueLight}>2.000 labs cadastrados</Tag>
+                <Tag color={C.amber} bg={C.amberLight}>Seed · R$1.2M</Tag>
+                <Tag color={C.blue} bg={C.blueLight}>18.000 labs endereçáveis · ABRAMED 2024</Tag>
               </div>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12, marginBottom: 28 }}>
-              {[{ v: "2.000+", l: "Laboratórios", c: C.blue }, { v: "1.847", l: "Leilões", c: C.teal }, { v: "R$482k", l: "Economia gerada", c: C.green }, { v: "R$87", l: "Ticket médio", c: C.amber }, { v: "73%", l: "Conversão", c: C.blue }, { v: "NPS 68", l: "Satisfação", c: C.green }].map(k => (
+              {[{ v: "18.000+", l: "Labs no Brasil", c: C.blue }, { v: "2,53B", l: "Exames/ano no BR", c: C.teal }, { v: "75%", l: "Sem plano saúde", c: C.green }, { v: "R$45B", l: "Mercado privado", c: C.amber }, { v: "10%", l: "Crescimento a.a.", c: C.blue }, { v: "R$40B", l: "Receita setor 2024", c: C.green }].map(k => (
                 <Card key={k.l} style={{ padding: "16px 12px", textAlign: "center" }}>
                   <div style={{ fontWeight: 900, fontSize: 20, color: k.c, fontFamily: "'Syne', sans-serif" }}>{k.v}</div>
                   <div style={{ fontSize: 11, color: C.textLight, marginTop: 4 }}>{k.l}</div>
@@ -851,7 +851,7 @@ function InvestorDashboard({ onNavigate }) {
             <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 8px", color: C.text }}>Mercado Endereçável</h2>
             <p style={{ color: C.textMid, margin: "0 0 32px" }}>Brasil como prova de conceito · Expansão global planejada</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginBottom: 32 }}>
-              {[{ tipo: "TAM", valor: "R$ 180B", desc: "Mercado total de diagnósticos no Brasil + EUA", cor: C.blue }, { tipo: "SAM", valor: "R$ 28B", desc: "Pacientes sem plano + plataformas de prescrição digital", cor: C.teal }, { tipo: "SOM", valor: "R$ 420M", desc: "Mercado capturável com operação em SP/RJ em 3 anos", cor: C.green }].map(m => (
+              {[{ tipo: "TAM", valor: "R$ 45B", desc: "Mercado privado de medicina diagnóstica no Brasil. Setor cresceu 10% em 2024, com R$34B de receita privada — Painel ABRAMED 2024.", cor: C.blue }, { tipo: "SAM", valor: "R$ 12B", desc: "Exames pagos diretamente pelo paciente (cash-pay). 75% dos brasileiros sem plano privado equivale a ~152M de pessoas — ANS 2024.", cor: C.teal }, { tipo: "SOM", valor: "R$ 180M", desc: "Capturável em 3 anos operando SP, RJ e BH. Representa 1,5% do SAM — meta conservadora e defensável a investidores.", cor: C.green }].map(m => (
                 <Card key={m.tipo} style={{ padding: 24, borderTop: `4px solid ${m.cor}` }}>
                   <Tag color={m.cor} bg={`${m.cor}12`}>{m.tipo}</Tag>
                   <div style={{ fontSize: 38, fontWeight: 900, fontFamily: "'Syne', sans-serif", color: m.cor, margin: "12px 0 8px" }}>{m.valor}</div>
@@ -896,10 +896,10 @@ function InvestorDashboard({ onNavigate }) {
             <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 32px", color: C.text }}>Modelo de Negócio</h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20, marginBottom: 28 }}>
               {[
-                { n: "B2C", title: "Take-Rate por Transação", desc: "8% sobre cada exame transacionado. Zero custo fixo para o paciente.", receita: "~R$ 7 / transação", color: C.blue },
-                { n: "B2B-A", title: "SaaS para Convênios", desc: "Planos de saúde não verticalizados usam a plataforma para reduzir custo de exames.", receita: "R$ 2.500 / mês / convênio", color: C.teal },
-                { n: "B2B-B", title: "SaaS Premium para Labs", desc: "Ferramentas avançadas de precificação, analytics e yield management.", receita: "R$ 390 / mês / lab", color: C.green },
-                { n: "B2B-C", title: "Saúde Ocupacional", desc: "Gestão de exames periódicos de colaboradores com relatórios consolidados.", receita: "R$ 8.000 / empresa / ano", color: C.amber },
+                { n: "B2C", title: "Take-Rate por Transação", desc: "10% sobre cada transação. Ticket médio de R$95 → R$9,50 por leilão. Fonte: preços praticados por Exmed e Labi.", receita: "~R$ 9,50 / transação", color: C.blue },
+                { n: "B2B-A", title: "SaaS para Convênios", desc: "Planos de saúde menores (não verticalizados) usam a plataforma para reduzir custo assistencial de exames simples.", receita: "R$ 1.800 / mês / convênio", color: C.teal },
+                { n: "B2B-B", title: "SaaS Premium para Labs", desc: "Laboratórios pagam por analytics avançado, yield management e posicionamento prioritário nos leilões.", receita: "R$ 290 / mês / lab", color: C.green },
+                { n: "B2B-C", title: "Saúde Ocupacional", desc: "Empresas gerenciam exames periódicos (NR-7) com relatórios consolidados. Mercado de R$4B/ano no Brasil.", receita: "R$ 6.000 / empresa / ano", color: C.amber },
               ].map(m => (
                 <Card key={m.n} style={{ padding: 24, borderLeft: `4px solid ${m.color}` }}>
                   <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
@@ -912,7 +912,7 @@ function InvestorDashboard({ onNavigate }) {
               ))}
             </div>
             <Card style={{ overflow: "hidden" }}>
-              <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.border}` }}><span style={{ fontWeight: 700, color: C.text }}>Projeções Financeiras — Investimento R$800k</span></div>
+              <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.border}` }}><span style={{ fontWeight: 700, color: C.text }}>Projeções Financeiras — Investimento R$1,2M Seed</span></div>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ background: C.bg }}>
@@ -922,7 +922,7 @@ function InvestorDashboard({ onNavigate }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {[["GMV","R$ 3.8M","R$ 18M","R$ 62M"],["Receita Líquida","R$ 380k","R$ 1.8M","R$ 6.2M"],["Labs Ativos","450","1.200","2.000+"],["Leilões / mês","2.400","12.000","48.000"],["Margem Bruta","62%","71%","78%"]].map((r, i) => (
+                  {[["GMV","R$ 2.1M","R$ 9.4M","R$ 31M"],["Receita Líquida","R$ 210k","R$ 940k","R$ 3.1M"],["Labs Ativos","120","480","1.200"],["Leilões / mês","800","4.200","18.000"],["Margem Bruta","58%","67%","74%"],["Break-even","—","Mês 18","—"]].map((r, i) => (
                     <tr key={i} style={{ borderTop: `1px solid ${C.borderLight}` }}>
                       <td style={{ padding: "12px 20px", fontSize: 13, color: C.textMid }}>{r[0]}</td>
                       <td style={{ padding: "12px 20px", textAlign: "right", fontSize: 13 }}>{r[1]}</td>
@@ -941,9 +941,9 @@ function InvestorDashboard({ onNavigate }) {
             <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 32px", color: C.text }}>Roadmap & Uso do Capital</h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginBottom: 32 }}>
               {[
-                { fase: "Q3 2026", titulo: "MVP Brasil", cor: C.green, status: "Em andamento", items: ["Lançamento SP + RJ","450 labs onboardados","Integração Mevo/Memed","App iOS + Android","Pagamento via Pix"] },
-                { fase: "Q1 2027", titulo: "Escala Nacional", cor: C.blue, status: "Planejado", items: ["10 cidades brasileiras","API LIS sistemas de labs","B2B planos de saúde","Yield Engine v2","1.200 labs ativos"] },
-                { fase: "Q3 2027", titulo: "Expansão Global", cor: C.amber, status: "Visão", items: ["Soft launch EUA FL/TX","América Latina MX CO","Cash-pay patients EUA","20M pacientes alcançados"] },
+                { fase: "Q4 2026", titulo: "MVP Validado", cor: C.green, status: "Em andamento", items: ["120 labs onboardados SP","Leilão funcional ao vivo","OCR com Claude AI ativo","CEP + geolocalização","Pix integrado"] },
+                { fase: "Q2 2027", titulo: "Product-Market Fit", cor: C.blue, status: "Planejado", items: ["480 labs em SP + RJ","App iOS + Android","API LIS (Tasy, MV)","B2B 3 convênios piloto","Break-even operacional"] },
+                { fase: "Q4 2027", titulo: "Escala Nacional", cor: C.amber, status: "Visão", items: ["1.200 labs em 5 cidades","Saúde ocupacional B2B","Série A para expansão","América Latina (piloto MX)","1M exames transacionados"] },
               ].map(f => (
                 <Card key={f.fase} style={{ padding: 24, borderTop: `4px solid ${f.cor}` }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
@@ -962,7 +962,7 @@ function InvestorDashboard({ onNavigate }) {
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
               <Card style={{ padding: 24 }}>
-                <div style={{ fontWeight: 700, color: C.text, marginBottom: 16 }}>Alocação do Capital — R$800k</div>
+                <div style={{ fontWeight: 700, color: C.text, marginBottom: 16 }}>Alocação do Capital — R$1,2M Seed</div>
                 {[{ item: "Tecnologia & Produto", p: 45, c: C.blue }, { item: "Vendas B2B & Growth", p: 30, c: C.teal }, { item: "Operações & Jurídico", p: 15, c: C.amber }, { item: "Reserva Estratégica", p: 10, c: C.textLight }].map(u => (
                   <div key={u.item} style={{ marginBottom: 14 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 6 }}>
@@ -978,10 +978,11 @@ function InvestorDashboard({ onNavigate }) {
               <Card style={{ padding: 24 }}>
                 <div style={{ fontWeight: 700, color: C.text, marginBottom: 12 }}>Contato para Investidores</div>
                 <p style={{ color: C.textMid, fontSize: 13, lineHeight: 1.8, marginBottom: 20 }}>
-                  Buscamos R$800k para 18 meses:<br />
-                  • 450 labs ativos em SP e RJ<br />
-                  • Break-even projetado: Mês 14<br />
-                  • Exit via M&A ou Série B em 36 meses
+                  Buscamos R$1,2M Seed para 18 meses:<br />
+                  • 120 labs ativos em SP (mês 6)<br />
+                  • 480 labs SP + RJ (mês 12)<br />
+                  • Break-even operacional: Mês 18<br />
+                  • Exit via M&A ou Série A em 36 meses
                 </p>
                 <div style={{ display: "flex", gap: 10 }}>
                   <Btn style={{ flex: 1 }}>📧 Solicitar Pitch Deck</Btn>
