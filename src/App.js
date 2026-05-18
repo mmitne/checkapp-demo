@@ -1,5 +1,18 @@
 import { useState, useEffect } from "react";
 
+// ─── RESPONSIVE HOOK ──────────────────────────────────────────────────────────
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 768 : false
+  );
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  return isMobile;
+}
+
 // ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
 const C = {
   bg: "#F8FAFB",
@@ -115,43 +128,65 @@ function Stars({ rating }) {
 }
 
 function Header({ page, onNavigate }) {
+  const isMobile = useIsMobile();
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <header style={{
       background: C.surface, borderBottom: `1px solid ${C.border}`,
-      padding: "0 40px", height: 64, display: "flex", alignItems: "center",
+      padding: isMobile ? "0 16px" : "0 40px", height: 64, display: "flex", alignItems: "center",
       justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100,
     }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 0 : 32 }}>
         <div onClick={() => onNavigate("home")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 32, height: 32, borderRadius: 8, background: C.blue, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, color: "#fff", fontWeight: 900 }}>✓</div>
           <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 18, color: C.text, letterSpacing: "-0.02em" }}>Check<span style={{ color: C.blue }}>App</span></span>
         </div>
-        <nav style={{ display: "flex", gap: 4 }}>
-          {[
-            { id: "home", label: "Início" },
-            { id: "patient", label: "Para Pacientes" },
-            { id: "lab", label: "Para Laboratórios" },
-            { id: "investor", label: "Investidores" },
-          ].map(item => (
-            <button key={item.id} onClick={() => onNavigate(item.id)} style={{
-              background: page === item.id ? C.blueLight : "transparent",
-              color: page === item.id ? C.blue : C.textMid,
-              border: "none", padding: "6px 12px", borderRadius: 6, cursor: "pointer",
-              fontSize: 13, fontWeight: page === item.id ? 700 : 500,
-              fontFamily: "'DM Sans', sans-serif", transition: "all 0.15s"
-            }}>{item.label}</button>
-          ))}
-        </nav>
+        {!isMobile && (
+          <nav style={{ display: "flex", gap: 4 }}>
+            {[
+              { id: "home", label: "Início" },
+              { id: "patient", label: "Para Pacientes" },
+              { id: "lab", label: "Para Laboratórios" },
+              { id: "investor", label: "Investidores" },
+            ].map(item => (
+              <button key={item.id} onClick={() => onNavigate(item.id)} style={{
+                background: page === item.id ? C.blueLight : "transparent",
+                color: page === item.id ? C.blue : C.textMid,
+                border: "none", padding: "6px 12px", borderRadius: 6, cursor: "pointer",
+                fontSize: 13, fontWeight: page === item.id ? 700 : 500,
+                fontFamily: "'DM Sans', sans-serif", transition: "all 0.15s"
+              }}>{item.label}</button>
+            ))}
+          </nav>
+        )}
       </div>
       <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-        <Tag color={C.green} bg={C.greenLight}>● Ao vivo</Tag>
-        <Btn variant="primary" size="sm" onClick={() => onNavigate("patient")}>Fazer Exame</Btn>
+        {!isMobile && <Tag color={C.green} bg={C.greenLight}>● Ao vivo</Tag>}
+        {isMobile ? (
+          <div style={{ position: "relative" }}>
+            <button onClick={() => setMenuOpen(!menuOpen)} style={{ background: C.blueLight, border: "none", borderRadius: 8, padding: "8px 12px", cursor: "pointer", fontSize: 18, color: C.blue }}>☰</button>
+            {menuOpen && (
+              <div style={{ position: "absolute", right: 0, top: 44, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: 8, width: 200, boxShadow: C.shadowMd, zIndex: 200 }}>
+                {[{ id: "home", label: "Início" }, { id: "patient", label: "Para Pacientes" }, { id: "lab", label: "Para Laboratórios" }, { id: "investor", label: "Investidores" }].map(item => (
+                  <button key={item.id} onClick={() => { onNavigate(item.id); setMenuOpen(false); }} style={{
+                    width: "100%", display: "block", textAlign: "left", padding: "10px 14px", background: page === item.id ? C.blueLight : "transparent",
+                    color: page === item.id ? C.blue : C.text, border: "none", borderRadius: 8, cursor: "pointer",
+                    fontSize: 14, fontWeight: page === item.id ? 700 : 400, fontFamily: "'DM Sans', sans-serif"
+                  }}>{item.label}</button>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <Btn variant="primary" size="sm" onClick={() => onNavigate("patient")}>Fazer Exame</Btn>
+        )}
       </div>
     </header>
   );
 }
 
 function HomePage({ onNavigate }) {
+  const isMobile = useIsMobile();
   const [timers, setTimers] = useState(LEILOES_MOCK.map(l => l.timer));
   useEffect(() => {
     const t = setInterval(() => setTimers(p => p.map(s => Math.max(0, s - 1))), 1000);
@@ -160,18 +195,18 @@ function HomePage({ onNavigate }) {
 
   return (
     <div style={{ background: C.bg, minHeight: "100vh" }}>
-      <div style={{ background: "linear-gradient(160deg, #001F4D 0%, #003A8C 60%, #005EB8 100%)", padding: "80px 40px 100px", position: "relative", overflow: "hidden" }}>
+      <div style={{ background: "linear-gradient(160deg, #001F4D 0%, #003A8C 60%, #005EB8 100%)", padding: isMobile ? "48px 20px 64px" : "80px 40px 100px", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, opacity: 0.06, backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "32px 32px" }} />
         <div style={{ maxWidth: 1100, margin: "0 auto", position: "relative", zIndex: 1 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 420px", gap: 64, alignItems: "center" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 400px", gap: isMobile ? 36 : 64, alignItems: "center" }}>
             <div>
               <div style={{ marginBottom: 20 }}>
                 <Tag color="#00BCD4" bg="rgba(0,188,212,0.15)">Leilão Reverso · Medicina Diagnóstica</Tag>
               </div>
-              <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 48, fontWeight: 800, color: "#fff", lineHeight: 1.1, letterSpacing: "-0.03em", margin: "0 0 20px" }}>
+              <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: isMobile ? 30 : 48, fontWeight: 800, color: "#fff", lineHeight: 1.15, letterSpacing: "-0.02em", margin: "0 0 16px" }}>
                 Exames laboratoriais com <span style={{ color: "#64B5F6" }}>até 60% de economia</span>
               </h1>
-              <p style={{ color: "rgba(255,255,255,0.65)", fontSize: 17, lineHeight: 1.7, margin: "0 0 36px", maxWidth: 480 }}>
+              <p style={{ color: "rgba(255,255,255,0.65)", fontSize: isMobile ? 15 : 17, lineHeight: 1.7, margin: "0 0 28px" }}>
                 Laboratórios parceiros competem pelo seu pedido médico em tempo real. Você escolhe o melhor preço, horário e localização.
               </p>
               <div style={{ display: "flex", gap: 12 }}>
@@ -182,7 +217,7 @@ function HomePage({ onNavigate }) {
                   Ver Dashboard
                 </Btn>
               </div>
-              <div style={{ display: "flex", gap: 40, marginTop: 48 }}>
+              <div style={{ display: "flex", gap: isMobile ? 20 : 40, marginTop: 32, flexWrap: "wrap" }}>
                 {[{ v: "2.000+", l: "Laboratórios credenciados" }, { v: "R$482k", l: "Economia gerada" }, { v: "73%", l: "Taxa de conversão" }].map(s => (
                   <div key={s.l}>
                     <div style={{ color: "#fff", fontWeight: 800, fontSize: 22, fontFamily: "'Syne', sans-serif" }}>{s.v}</div>
@@ -229,12 +264,12 @@ function HomePage({ onNavigate }) {
         </div>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "80px 40px" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "48px 20px" : "80px 40px" }}>
         <div style={{ textAlign: "center", marginBottom: 56 }}>
           <div style={{ fontSize: 12, fontWeight: 600, color: C.blue, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>PROCESSO</div>
-          <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 34, fontWeight: 800, margin: 0, color: C.text, letterSpacing: "-0.02em" }}>Do pedido médico ao resultado em 3 passos</h2>
+          <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: isMobile ? 24 : 34, fontWeight: 800, margin: 0, color: C.text, letterSpacing: "-0.02em" }}>Do pedido médico ao resultado em 3 passos</h2>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 16 }}>
           {[
             { n: "01", icon: "🔍", title: "IA lê seu pedido", desc: "Fotografe ou envie o PDF do seu pedido médico. Nossa IA extrai todos os exames automaticamente.", color: C.blue },
             { n: "02", icon: "⚡", title: "Laboratórios competem", desc: "Laboratórios credenciados próximos ao seu CEP fazem lances em tempo real pelo seu pedido.", color: C.teal },
@@ -250,7 +285,7 @@ function HomePage({ onNavigate }) {
         </div>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 40px 80px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "0 20px 48px" : "0 40px 80px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20 }}>
         <Card onClick={() => onNavigate("patient")} style={{ padding: 36, background: C.blue, border: "none", cursor: "pointer" }}>
           <div style={{ fontSize: 36, marginBottom: 16 }}>👤</div>
           <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800, margin: "0 0 10px", color: "#fff" }}>Sou Paciente</h3>
@@ -269,6 +304,7 @@ function HomePage({ onNavigate }) {
 }
 
 function PatientFlow({ onNavigate }) {
+  const isMobile = useIsMobile();
   const [step, setStep] = useState(1);
   const [cep, setCep] = useState("");
   const [cepData, setCepData] = useState(null);
@@ -363,7 +399,7 @@ function PatientFlow({ onNavigate }) {
 
   return (
     <div style={{ background: C.bg, minHeight: "100vh" }}>
-      <div style={{ background: C.surface, borderBottom: `1px solid ${C.border}`, padding: "20px 40px" }}>
+      <div style={{ background: C.surface, borderBottom: `1px solid ${C.border}`, padding: isMobile ? "16px 16px" : "20px 40px" }}>
         <div style={{ maxWidth: 680, margin: "0 auto", display: "flex", alignItems: "center" }}>
           {steps.map((s, i) => (
             <div key={s} style={{ display: "flex", alignItems: "center", flex: i < steps.length - 1 ? 1 : "none" }}>
@@ -377,7 +413,7 @@ function PatientFlow({ onNavigate }) {
         </div>
       </div>
 
-      <div style={{ maxWidth: 680, margin: "0 auto", padding: "40px 24px" }}>
+      <div style={{ maxWidth: 680, margin: "0 auto", padding: isMobile ? "24px 16px" : "40px 24px" }}>
 
         {step === 1 && (
           <div>
@@ -745,6 +781,7 @@ function LabDashboard({ onNavigate }) {
 }
 
 function InvestorDashboard({ onNavigate }) {
+  const isMobile = useIsMobile();
   const [section, setSection] = useState("overview");
   const navItems = [
     { id: "overview", label: "Visão Geral" },
@@ -756,7 +793,7 @@ function InvestorDashboard({ onNavigate }) {
 
   return (
     <div style={{ background: C.bg, minHeight: "100vh" }}>
-      <div style={{ background: C.surface, borderBottom: `1px solid ${C.border}`, padding: "0 40px" }}>
+      <div style={{ background: C.surface, borderBottom: `1px solid ${C.border}`, padding: isMobile ? "0 16px" : "0 40px", overflowX: "auto" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", gap: 0 }}>
           {navItems.map(s => (
             <button key={s.id} onClick={() => setSection(s.id)} style={{ padding: "16px 20px", background: "none", border: "none", borderBottom: `3px solid ${section === s.id ? C.blue : "transparent"}`, color: section === s.id ? C.blue : C.textMid, fontWeight: section === s.id ? 700 : 500, fontSize: 14, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{s.label}</button>
@@ -764,7 +801,7 @@ function InvestorDashboard({ onNavigate }) {
         </div>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "40px" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "20px 16px" : "40px" }}>
         {section === "overview" && (
           <div>
             <div style={{ marginBottom: 32 }}>
@@ -777,7 +814,7 @@ function InvestorDashboard({ onNavigate }) {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12, marginBottom: 28 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(3, 1fr)" : "repeat(6, 1fr)", gap: 12, marginBottom: 28 }}>
               {[{ v: "18.000+", l: "Labs no Brasil", c: C.blue }, { v: "2,53B", l: "Exames/ano no BR", c: C.teal }, { v: "75%", l: "Sem plano saúde", c: C.green }, { v: "R$45B", l: "Mercado privado", c: C.amber }, { v: "10%", l: "Crescimento a.a.", c: C.blue }, { v: "R$40B", l: "Receita setor 2024", c: C.green }].map(k => (
                 <Card key={k.l} style={{ padding: "16px 12px", textAlign: "center" }}>
                   <div style={{ fontWeight: 900, fontSize: 20, color: k.c, fontFamily: "'Syne', sans-serif" }}>{k.v}</div>
@@ -786,7 +823,7 @@ function InvestorDashboard({ onNavigate }) {
               ))}
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 20, marginBottom: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "2fr 1fr", gap: 16, marginBottom: 20 }}>
               <Card style={{ padding: 24 }}>
                 <div style={{ fontWeight: 700, color: C.text, marginBottom: 4 }}>GMV Mensal (R$)</div>
                 <div style={{ fontSize: 12, color: C.textLight, marginBottom: 20 }}>Crescimento acumulado 12 meses</div>
@@ -850,7 +887,7 @@ function InvestorDashboard({ onNavigate }) {
           <div>
             <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 8px", color: C.text }}>Mercado Endereçável</h2>
             <p style={{ color: C.textMid, margin: "0 0 32px" }}>Brasil como prova de conceito · Expansão global planejada</p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginBottom: 32 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 16, marginBottom: 28 }}>
               {[{ tipo: "TAM", valor: "R$ 45B", desc: "Mercado privado de medicina diagnóstica no Brasil. Setor cresceu 10% em 2024, com R$34B de receita privada — Painel ABRAMED 2024.", cor: C.blue }, { tipo: "SAM", valor: "R$ 12B", desc: "Exames pagos diretamente pelo paciente (cash-pay). 75% dos brasileiros sem plano privado equivale a ~152M de pessoas — ANS 2024.", cor: C.teal }, { tipo: "SOM", valor: "R$ 180M", desc: "Capturável em 3 anos operando SP, RJ e BH. Representa 1,5% do SAM — meta conservadora e defensável a investidores.", cor: C.green }].map(m => (
                 <Card key={m.tipo} style={{ padding: 24, borderTop: `4px solid ${m.cor}` }}>
                   <Tag color={m.cor} bg={`${m.cor}12`}>{m.tipo}</Tag>
@@ -894,7 +931,7 @@ function InvestorDashboard({ onNavigate }) {
         {section === "model" && (
           <div>
             <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 32px", color: C.text }}>Modelo de Negócio</h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20, marginBottom: 28 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)", gap: 16, marginBottom: 24 }}>
               {[
                 { n: "B2C", title: "Take-Rate por Transação", desc: "10% sobre cada transação. Ticket médio de R$95 → R$9,50 por leilão. Fonte: preços praticados por Exmed e Labi.", receita: "~R$ 9,50 / transação", color: C.blue },
                 { n: "B2B-A", title: "SaaS para Convênios", desc: "Planos de saúde menores (não verticalizados) usam a plataforma para reduzir custo assistencial de exames simples.", receita: "R$ 1.800 / mês / convênio", color: C.teal },
@@ -939,7 +976,7 @@ function InvestorDashboard({ onNavigate }) {
         {section === "roadmap" && (
           <div>
             <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, margin: "0 0 32px", color: C.text }}>Roadmap & Uso do Capital</h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginBottom: 32 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 16, marginBottom: 28 }}>
               {[
                 { fase: "Q4 2026", titulo: "MVP Validado", cor: C.green, status: "Em andamento", items: ["120 labs onboardados SP","Leilão funcional ao vivo","OCR com Claude AI ativo","CEP + geolocalização","Pix integrado"] },
                 { fase: "Q2 2027", titulo: "Product-Market Fit", cor: C.blue, status: "Planejado", items: ["480 labs em SP + RJ","App iOS + Android","API LIS (Tasy, MV)","B2B 3 convênios piloto","Break-even operacional"] },
@@ -960,7 +997,7 @@ function InvestorDashboard({ onNavigate }) {
                 </Card>
               ))}
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
               <Card style={{ padding: 24 }}>
                 <div style={{ fontWeight: 700, color: C.text, marginBottom: 16 }}>Alocação do Capital — R$1,2M Seed</div>
                 {[{ item: "Tecnologia & Produto", p: 45, c: C.blue }, { item: "Vendas B2B & Growth", p: 30, c: C.teal }, { item: "Operações & Jurídico", p: 15, c: C.amber }, { item: "Reserva Estratégica", p: 10, c: C.textLight }].map(u => (
